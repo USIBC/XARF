@@ -1,0 +1,18 @@
+#!/bin/bash
+# D. Racine 20160308
+
+[ -z ${XARF_HOME+x} ] && { echo XARF_HOME is not set, quitting; exit 1; }
+
+. $XARF_HOME/xarf-env
+
+MSG="To exit without killing xarf: M-x slime-disconnect [RET] C-x C-c"
+
+REPL="\
+(progn
+  (add-hook 'slime-connected-hook
+            (lambda () (delete-other-windows)
+                       (setq minibuffer-message-timeout 9)
+                       (minibuffer-message \"$MSG\")))
+  (slime-connect \"127.0.0.1\" $SWANK_PORT))"
+
+exec emacs --color=no --eval="$REPL"

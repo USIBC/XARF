@@ -1,0 +1,87 @@
+#!/bin/bash
+# Generates a Quicktime or webTA load or performance graph image on stdout.
+# Uses RRD data from all production nodes.
+# D. Racine, 20071025
+# Merged QT & webTA functionality - D. Racine 20160315
+
+[ -z ${HYDRA_HOME+x} ] && { echo HYDRA_HOME is not set, quitting; exit 1; }
+
+[[ ! "$1" =~ ^(qt|wt)$ || "$2" != [ab] || $# -lt 3 ]] && { printf "
+  Usage: `basename $0` qt|wt a|b ID [startdate length_in_days]\n
+  Where startdate is of the form YYYYMMDD[.HH.MM]\n\n"; exit 1; }
+
+STAMP="$(date)"
+IMGFORMAT=PNG
+FONT="DEFAULT:11:Liberation"
+W=900; H=318
+
+BRAND="$1"
+GRAPHTYPE="$2"
+ID="$3"
+START="$4"
+DAYS="$5"
+
+[[ $BRAND =~ ^(qt|wt)$ \
+  && $GRAPHTYPE =~ ^[ab]$ \
+  && $ID =~ ^[0-9]{3,4}$ \
+  && $START =~ ^[0-9.]{0,14}$ \
+  && $DAYS =~ ^[0-9]*$ ]] || { echo invalid parameter; exit 1; }
+
+RRD1="$HYDRA_HOME/rrd/$BRAND-hostname1-$ID.rrd"
+RRD2="$HYDRA_HOME/rrd/$BRAND-hostname2-$ID.rrd"
+RRD3="$HYDRA_HOME/rrd/$BRAND-hostname3-$ID.rrd"
+
+# Reformat START & END if necessary:
+if [[ ! "$START" || ! "$DAYS" ]]; then
+  START="end-1day"
+  END="now"
+  TITLE="$ID: Past 24 Hours -- Generated $STAMP"
+elif [[ "$START" =~ ^[0-9]{8}\.[0-9]{2}\.[0-9]{2}$ ]]; then
+  START="$(printf "%s %s:%s" $(tr '.' ' ' <<<"$START"))"
+  END="start+${DAYS}days"
+  TITLE="$ID: $DAYS Day period beginning $START -- Generated $STAMP"
+else
+  START="$START 00:00"
+  END="start+${DAYS}days"
+  TITLE="$ID: $DAYS Day period beginning $START -- Generated $STAMP" ; fi
+
+if [ "$GRAPHTYPE" == "a" ]; then
+  rrdtool graph - -a $IMGFORMAT -n "$FONT" -n WATERMARK:4: \
+  --start "$START" --end "$END" \
+  --width $W --height $H \
+  -t "Load Volume: $TITLE" \
+  -v "Requests processed per hour" \
+  -L 7 --alt-autoscale-max \
+  DEF:t1=$RRD1:total:AVERAGE \
+  DEF:t2=$RRD2:total:AVERAGE \
+  DEF:t3=$RRD3:total:AVERAGE \
+  AREA:t1#00A000:'hostname1' \
+  AREA:t2#0030F0:'hostname2':STACK \
+  AREA:t3#777777:'hostname3':STACK
+else
+  rrdtool graph - -a $IMGFORMAT -n "$FONT" -n WATERMARK:4: \
+  --start "$START" --end "$END" \
+  --width $W --height $H \
+  -t "Processing Times >2s: $TITLE" \
+  -v "Requests processed per hour" \
+  -L 7 --alt-autoscale-max \
+  DEF:b1=$RRD1:2to6:AVERAGE \
+  DEF:b2=$RRD2:2to6:AVERAGE \
+  DEF:b3=$RRD3:2to6:AVERAGE \
+  DEF:c1=$RRD1:6to14:AVERAGE \
+  DEF:c2=$RRD2:6to14:AVERAGE \
+  DEF:c3=$RRD3:6to14:AVERAGE \
+  DEF:d1=$RRD1:14to30:AVERAGE \
+  DEF:d2=$RRD2:14to30:AVERAGE \
+  DEF:d3=$RRD3:14to30:AVERAGE \
+  DEF:e1=$RRD1:30plus:AVERAGE \
+  DEF:e2=$RRD2:30plus:AVERAGE \
+  DEF:e3=$RRD3:30plus:AVERAGE \
+  CDEF:tb=b1,b2,+,b3,+ \
+  CDEF:tc=c1,c2,+,c3,+ \
+  CDEF:td=d1,d2,+,d3,+ \
+  CDEF:te=e1,e2,+,e3,+ \
+  AREA:te#F00000:'30+s' \
+  AREA:td#B0B000:'14-30s':STACK \
+  AREA:tc#0030F0:'6-14s':STACK \
+  AREA:tb#00A000:'2-6s':STACK ; fi

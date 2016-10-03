@@ -1,0 +1,12 @@
+(add-to-list 'load-path "/path/to/slime")
+(require 'slime-autoloads)
+(setq slime-contribs '(slime-repl slime-autodoc slime-asdf))
+
+(add-hook 'lisp-mode-hook (lambda () (slime-mode t)
+                            (local-set-key "\r" 'newline-and-indent)
+                            (setq lisp-indent-function 'common-lisp-indent-function)
+                            (setq indent-tabs-mode nil)))
+
+(custom-set-variables '(inhibit-startup-screen t))
+(setq make-backup-files nil)
+(menu-bar-mode -1)

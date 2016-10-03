@@ -1,0 +1,13 @@
+The SWANK server included in XARF's SBCL process by the script
+XARF_HOME/bin/start-xarf requires the configuration defined in
+~/.swank.lisp in order to save REPL-compiled fasls in the correct
+location.
+
+Likewise, the script XARF_HOME/bin/repl-xarf invokes emacs+SLIME,
+which requires configuration in ~/.emacs.
+
+Reference copies of these two files are kept in this directory
+(XARF_HOME/emacs-swank-cfg/), named 'dot-swank.lisp' & 'dot-emacs'.
+
+
+D. Racine 20160308

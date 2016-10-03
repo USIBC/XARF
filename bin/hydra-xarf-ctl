@@ -1,0 +1,46 @@
+#!/bin/bash
+# D. Racine 20160516
+
+. /path/to/xarf/xarf-env
+
+PRG=$(basename $0); ARGS="$*"
+
+
+usage() { printf "
+  Stops, starts, or bounces *both* XARF and hydra.\n
+  usage: $PRG stop|start|restart
+         $PRG start force\n
+  $PRG start        does nothing unless the OS has booted within the past hour\n
+  $PRG start force  takes action regardless of OS uptime\n\n"; exit 1; }
+
+
+msg() { echo "### $PRG $ARGS $1 `date`"; }
+
+
+start() {
+  local R=0
+  $HYDRA_HOME/bin/start-hydra && echo "hydra started `date`" || R=1
+  $XARF_HOME/bin/start-xarf && echo "XARF started `date`" || R=1
+  return $R; }
+
+
+stop() {
+  local N=0
+  $HYDRA_HOME/bin/stop-hydra && echo "hydra stop signaled `date`"
+  $XARF_HOME/bin/stop-xarf && echo "XARF stop signaled `date`"
+  while pgrep -f 'sbcl.*(hydra|xarf)$'; do 
+    [ $N -gt 15 ] && {
+      echo "shutdown timeout, issuing pkill -9 -f 'sbcl.*(hydra|xarf)$'"
+      pkill -9 -f 'sbcl.*(hydra|xarf)$'; }
+    sleep 2; N=$((N+1)); done
+  echo "Both apps confirmed down `date`"; }
+
+
+[ $# -eq 0 ] && usage
+
+if [ "x$1" == "xstart" ]; then
+  [ $# -gt 1 ] && { msg BEGIN; start; X=$?; msg END; exit $X; }
+  [ `cut -d. -f1 /proc/uptime` -lt 3600 ] && { msg BEGIN; start; X=$?; msg END; exit $X; }
+elif [ "x$1" == "xstop" ]; then msg BEGIN; stop; msg END; exit 0
+elif [ "x$1" == "xrestart" ]; then msg BEGIN; stop; start; X=$?; msg END; exit $X
+else msg "NOT UNDERSTOOD, taking no action"; usage; fi

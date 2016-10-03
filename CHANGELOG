@@ -1,0 +1,359 @@
+20160930.1930
+  * Move remaining user+host names into src/*config.lisp
+
+20160928.1730
+  * Use cl-pass for password hashing and validation
+
+20160928.1430
+  * Added email-based password reset
+
+20160926.1800
+  * Email address slot in user records & related screens
+
+20160921.1800
+  * Separated hydra and XARF trees to facilitate standalone use
+
+20160520.1400
+  * front-end rendering changed from XHTML to HTML5
+
+20160407.1600
+  * corrected the order of a few struct, function, & macro definitions
+
+20160407.1430
+  * 'scat' string concatenation macro; 'timestr' function for timestamps
+
+20160406.1400
+  * Code changes required by new Hunchentoot API
+  * bugfix: exclude newlines when composing xarf-ts-status invocations
+
+20160310.1230
+  * bugfix: *xarf-server* binding
+
+20160309.1830
+  * shutdown script: bin/stop-xarf
+  * documentation: process control and REPL access
+
+20160308.1300
+  * bin/repl-xarf script for easy REPL access
+  * emacs-swank-cfg/*; documentation updates
+
+20160303.1900
+  * bin/start-xarf output fix
+
+20160303.1330
+  * Removed detachtty dependency; REPL access via SWANK/SLIME
+  * Documentation updates: README
+
+20160223.1800
+  * bugfix to /groovit: exclude newlines when composing xarf-rg invocations
+
+20160208.1830
+  * cleanup: /login, /passwd, and menu
+
+20160205.1830
+  * cleanup: config, css
+
+20160204.1500
+  * Log session creation events with user ID and client IP address
+
+20160128.1430
+  * STreports/run+conf: cleaned up rungroup/scheduling implementation
+
+20160127.1730
+  * Starteam-backed reports: show comments next to report filenames
+    comments are set in src/st-config.lisp
+
+20160126.1800
+  * STreports/conf: documentation
+
+20160126.1400
+  * STreports/run+conf:
+    allow subsets of reports to be scheduled for extraction at different times
+
+20160119.1230
+  * STreports/run: omit title row in reports; include timestamp in filename
+
+20160115.1430
+  * starteam.lisp: set report filename via Content-Disposition header
+
+20160107.1730
+  * run-remote-cmd: append ssh stderr to *log-file*
+
+20151223.1400
+  * Set :PASS-CHANGE-TIME to 0 when passwd is set via /edit-user
+
+20151218.1300
+  * documentation in STreports/conf
+
+20151217.1730
+  * STreports frontend: starteam.lisp
+  * Bugfix to STreports/run
+
+20151214.1700
+  * STreports backend: STreports/run, STreports/conf:
+    script to extract reports from StarTeam by running SDB-provided jars
+
+20151020.1630
+  * QT performance graph: changed response time categories
+    from: <5s, 5-15s, 15-30s, 30-60s, 60+s
+    to:   <2s,  2-6s,  6-14s, 14-30s, 30+s
+
+20151019.1700
+  * Fixed unsafe read-from-string invocations
+
+20150603.1200
+  * Cleanup menu item names and report titles
+
+20150518.1430
+  * Quicktime jserver utilization report
+
+20150515.1830
+  * Infrastructure functions for future jserver utilization report
+
+20150407.1230
+  * Simplified QT app_cfg.jpl viewer
+
+20150406.1800
+  * Set check-for-stopped to 't' in process-wait forms
+
+20150312.1830
+  * changed persistence locking mechanisms from hunchentoot-mp to sb-thread
+  * minor CSS adjustment
+
+20150209.1830
+  * CSS cleanup
+  * Type column abbreviation in app directories
+
+20150205.1930
+  * str2suid/suid2str userID input/output handlers
+
+20150205.1400
+  * Changed userID representation from string to symbol
+  * UserID input is now case-insensitive 
+
+20150204.1400
+  * simplified 'remove-if-not' forms to 'remove :test-not :key'
+
+20150203.1800
+  * simplified user records, operations, and persistence format
+
+20150130.1900
+  * read-from-string failsafe
+  * SLIME-related fix: removed unnecessary 'in-package' calls
+
+20150129.1700
+  * updated src/*.asd to ASDF3 standards
+
+20150129.1500
+  * fixed checkboxes on admin & load-graph forms
+
+20150129.1200
+  * user roles cleanup & bugfix in edit-user form
+
+20150127.1400
+  * favicon.ico handler
+
+20150116.1500
+  * ID-Client row header links in HTML tabulated reports
+  * WebTA & Quicktime report code cleanup
+
+20150109.1800
+  * WebTA Timesheet Status report
+  * minor menu cleanup
+
+20150106.1930
+  * Added bulk groovy-based reports for WebTA
+
+20141128.1530
+  * Eliminated Expect/Tcl dependency
+  * Optimized remote command execution API
+
+20141125.1530
+  * Removed obsolete 'qstomcat' report
+
+20141124.1300
+  * Clarified titles of QT & WebTA response times graphs
+
+20141117.1400
+  * Removed '<5s' channel from QT response times graph
+  * Removed '<2s' channel from WebTA response times graph
+
+20140918.1430:
+  * Menu cleanup
+
+20140915.1730:
+  * Cleanup: static/about.html
+
+20140915.1700:
+  * Report generation timestamps on QT & WebTA directories
+
+20140911.1930:
+  * Refactored QT reports: efficiency & WebSphere debris removal
+
+20140903.1630:
+  * qt-load-graphs cleanup
+  * removed obsolete 'qthourly' report
+
+20140828.1500:
+  * load/performance graph report for WebTA
+
+20140721.1400:
+  * Active employee count report for production WebTA
+
+20140619.1600:
+  * Added WebTA production DB & login screen status report
+  * Generalized test-qt-db.ex to testdb.ex for use with QT & WebTA
+
+20140616.1600:
+  * webta.lisp: code cleanup
+
+20140604.1330:
+  * wt-directory: performance fix & added discrepancy detection
+
+20140529.1800:
+  * Added WebTA status overview (Wstatus)
+
+20140528.1900:
+  * WebTA config definitions and instance directory
+  * xarf.css changes to improve table readability
+
+20140327.1700:
+  * Reorg source tree: *.lisp in src/ & lib/, CLI executables in bin/
+
+20140326.1900:
+  * Bugfix: existing process detection in start-xarf
+
+20140326.1300:
+  * Updated to ASDF 3 system definition (http://common-lisp.net/project/asdf/)
+
+20130830.1130:
+  * Bugfix: remote-scripts/appver-dbcfg
+
+20130814.1730:
+  * Cleanup: bin/start-xarf
+
+20130814.1545:
+  * Added 'qstatus' report screen
+
+20130812.1900:
+  * Porting related fixes continue...
+
+20130809.1300:
+  * Moved external lib dependencies to XARF_HOME/lib/
+
+20130808.1900:
+  * Initial porting of bin/* to RHEL/tomcat QT env
+
+20130807.1230:
+  * Updated remote-scripts
+  * Removed obsolete screens: cptload, qt-ifilcheck, qtavail, ststatus, qsforum
+  * Cleaned up static content
+
+20120511.1200:
+  * cleanup: rename importdata to listimports
+
+20120209.1830:
+  * Added 'listimportdata' screen
+
+20110926.1200:
+  * get-qs-tomcat-log: changed path and filename format for Tomcat 7
+
+20101215.1400:
+  * Changed webtrans screen to reflect instance IDs instead of DB schemas
+
+20100920.1700:
+  * Added screen to view QT IFIL0229/0084 status
+
+20100505.1730:
+  * Renamed qt-availability to qt-dbstatus
+
+20100426.1400:
+  * Added 'year' input field to timesheet status screen
+
+20100426.1230:
+  * Added 'Timesheet Status' screen
+
+20100408.1700:
+  * Fixed timeout overrun in 'test-qt-login-screen'
+
+20090901.1630:
+  * Cleaned up component load report function
+
+20090710.1300:
+  * Added BLM, MMS, NPS, & PTR Component Load report screens
+
+20080514.1400:
+  * Start script checks if app is already running
+  * Resolved symbol name collision in new version of ironclad
+
+20080501.1700:
+  * Password change screen redirects user to main menu after a 
+    successful password change.
+
+20080424.1200:
+  * Added 'make-uri-dispatcher-and-handler' macro.
+
+20080423.1300:
+  * Cleaned up make-xarf-html-screen macro & its invocations.
+
+20080407.1300:
+  * Added webtrans screen.
+
+20080404.1800:
+  * Release pipe allocation upon completion of all child processes
+
+20080403.1100:
+  * User addition bugfix: initialize pass-change-time to 0.
+
+20080402.1800:
+  * Added password aging & minimal requirements
+  * 'About' screen now displays the Changelog
+
+20080401.1500:
+  * Bugfix in qt-availability; timeout changes
+
+20080401.1400:
+  * Rewrote qt-availability report with threaded data collection.
+
+20080331.1800:
+  * Added QT client names to host-id-form
+
+20080328.1800:
+  * Code cleanup: screen generation macro & QT directory
+  * Added progress indicator for QT directory data gather
+
+20080328.1300:
+  * QT directory code cleanup; added tooltip QT URLs
+  * Updated README
+
+20080327.1800:
+  * XARF QT instance data now in 'qt-config.lisp'
+  * Added 'QT Directory' screen
+
+20080320.1530:
+  * fixed TZ/DST formatting in system-date
+
+20080319.1830:
+  * use native time functions in system-date
+
+20080319.1500:
+  * Fixed output buffer truncation in Expect scripts
+
+20080220.1600:
+  * web input sanitization
+
+20080214.1900:
+  * input validation fixes in scripts called by xarf
+
+20071221.1800:
+  * Added 'FWS Component Load Results' report
+
+20071204.1900:
+  * 'get-qs-tomcat-log' & 'ststatus' no longer use temporary files
+
+20071121.1600:
+  * Simplified runtime environment; all environment configuration parameters
+    are now in bin/xarf-env.
+
+20071119.1800:
+  * Initial release

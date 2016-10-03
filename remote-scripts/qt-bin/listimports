@@ -1,0 +1,51 @@
+#!/bin/bash
+# D. Racine 20120209
+
+. $HOME/QT-env
+
+export LC_TIME=C
+
+USAGE="
+  Returns the data import history for the specified QT app instance.
+  Uses 'getcxstring' to identify target DB schema.
+  Usage: $(basename $0) app_ID
+  "
+
+[[ ! $1 =~ ^[0-9]{3,4}$ ]] && { echo "$USAGE"; exit 1; }
+
+CXSTRING="$(getcxstring $1)"
+
+[ $? -ne 0 ] && exit 1
+
+SCHEMA="$(cut -f 1 -d / <<<"$CXSTRING")"
+DB="$(cut -f 2 -d @ <<<"$CXSTRING")"
+
+IMPQUERY="
+  set newpage 0;
+  set space 0;
+  set linesize 100;
+  set pagesize 0;
+  set echo off;
+  set feedback off;
+  set heading off;
+  set markup html off;
+  select substr(i.process_id,1,8)||'-'||
+         substr(i.process_id,9,2)||':'||
+         substr(i.process_id,11,2)||':'||
+         substr(i.process_id,13,2)||'  '||
+         rpad(i.file_id,22)||rpad(i.process_status,22)||count(*)
+  from input_file i, input_file_detail ifd
+  where i.process_time >= sysdate - 20
+        and ifd.process_id (+)= i.process_id
+        and ifd.file_id (+)= i.file_id
+  group by i.file_id, i.process_id,i.process_status
+  order by i.process_id desc;"
+
+echo "
+## Data imports to $SCHEMA@$DB within the last 20 days
+## as of `date`:
+
+Process ID         File ID               Status                Record Count
+-----------------  --------------------  --------------------  ------------"
+
+sqlplus -S -L $CXSTRING <<<"$IMPQUERY"

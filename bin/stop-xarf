@@ -1,0 +1,20 @@
+#!/bin/bash
+# Stops xarf. Uses definitions in XARF_HOME/xarf-env
+# D. Racine 20160309
+
+[ -z ${XARF_HOME+x} ] && { echo XARF_HOME is not set, quitting; exit 1; }
+
+pgrep -f "sbcl.*xarf" >/dev/null \
+  || { echo XARF sbcl process not found, nothing to stop; exit 1; }
+
+. $XARF_HOME/xarf-env
+
+QUITCMD="00003d(:emacs-rex (swank:interactive-eval \"(clean-quit)\") nil t 1)"
+
+nc 127.0.0.1 $SWANK_PORT <<<"$QUITCMD" >/dev/null
+
+sleep 1
+
+P="$(pgrep -f "sbcl.*xarf")" && { echo Quit failed, sbcl PID $P still running; exit 1; }
+
+exit 0

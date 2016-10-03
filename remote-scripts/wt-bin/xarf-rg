@@ -1,0 +1,31 @@
+#!/bin/bash
+# D. Racine 20150105
+
+. $HOME/WT-env
+
+PRG=$(basename $0)
+
+usage() { printf "
+  Writes a zipfile to stdout containing the results of executing
+  'rungroovy' with the same arguments.\n
+  Usage: $PRG [-i inputfile] script.groovy id [...]\n\n"; exit 1; }
+
+[ $# -lt 2 ] && usage
+
+OWD=$PWD
+TS=$(date '+%Y%m%d.%H%M%S')
+
+if [ "x$1" == "x-i" ]; then
+  shift
+  IF="$(readlink -f $1)"; shift
+  GF="$(readlink -f $1)"; shift
+  TD=/tmp/$PRG$$-$(basename $GF .groovy)-$TS && mkdir $TD && cd $TD || exit 1
+  rungroovy -i $IF $GF $@ >rptlog.txt 2>&1
+else
+  GF="$(readlink -f $1)"; shift
+  TD=/tmp/$PRG$$-$(basename $GF .groovy)-$TS && mkdir $TD && cd $TD || exit 1
+  rungroovy $GF $@ >rptlog.txt 2>&1; fi
+
+cd ..
+zip -qr - $(basename $TD)
+cd $OWD && rm -rf $TD

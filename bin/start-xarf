@@ -1,0 +1,42 @@
+#!/bin/bash
+# Starts XARF and a corresponding swank server on localhost:SWANK_PORT.
+# Uses definitions in XARF_HOME/xarf-env
+# D. Racine 20160302
+
+[ -z ${XARF_HOME+x} ] && { echo XARF_HOME is not set, quitting; exit 1; }
+
+# Bail out if it looks like xarf is already running
+P="$(pgrep -f "sbcl.*xarf")" && { printf "
+  There appears to be a XARF sbcl process already running as PID $P\n
+  A new instance of XARF has *not* been started.\n\n"; exit 1; }
+
+. $XARF_HOME/xarf-env
+
+# Prevent process substitution zombies
+trap "" SIGCHLD
+
+LOGDIR=$XARF_HOME/log
+[ -d "$LOGDIR" ] || mkdir $LOGDIR || { echo mkdir $LOGDIR failed >&2; exit 1; }
+
+L=$LOGDIR/sbcl.xarf
+
+N=/dev/null
+
+S="\
+  (require :asdf)
+  (asdf:initialize-source-registry #P\"$XARF_HOME/asdf.conf\")
+  (require :xarf)
+  (in-package :xarf)
+  (load \"$SLIME_HOME/swank-loader.lisp\")
+  (swank-loader:init)
+  (swank:create-server :port $SWANK_PORT :dont-close t)
+  (princ \"== XARF started at \")
+  (loop (format t \"mark: ~a~%\" (timestr)) (sleep 900))"
+
+nohup sbcl --lose-on-corruption --userinit <(echo "$S") --eval "'xarf" <$N >$L 2>&1 &
+
+sleep 3
+
+P="$(pgrep -fo "sbcl.*xarf")" \
+  && { echo "sbcl PID $P started, writing to $L"; exit 0; } \
+  || { echo "sbcl quit, see $L"; exit 1; }

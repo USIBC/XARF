@@ -1,0 +1,150 @@
+;;; primitives.lisp -- low-level convenience functions & macros for XARF
+;;; D. Racine, 20070511
+
+(in-package :xarf)
+
+(defun str2suid (uidstr) (intern (string-upcase uidstr)))
+
+(defun suid2str (suid) (string-downcase (symbol-name suid)))
+
+(defmacro scat (&rest args) `(concatenate 'string ,@args))
+
+(defmacro with-html (&body body)
+  `(with-html-output-to-string (*standard-output* nil :prologue t)
+     ,@body))
+
+
+(defun menu (cssid menulist)
+  "Creates a simple html menu as a nested <ul id='cssid'>.
+  menulist should be of the form '((uri text submenu) ...)"
+  (with-html-output
+      (*standard-output*)
+    (cond
+      ((null menulist) nil)
+      (t (htm ((:ul :id cssid)
+               (dolist (i menulist)
+                 (htm ((:li) ((:a :href (first i)) (str (second i)))
+                       (menu cssid (third i)))))))))))
+
+
+(defun footer (fmenu)
+  "If fmenu is non-nil, creates an html footer containing fmenu.
+  fmuenu should be of the form '((uri text) ...)"
+  (when fmenu
+    (with-html-output (*standard-output*)
+      ((:h5)
+       (dolist (i fmenu)
+         (htm ((:a :href (first i)) (str (second i)))))
+       (:p "You are logged in as '"
+           (fmt "~a" (suid2str (session-value 'uid))) "'")))))
+
+
+(defmacro make-xarf-html-screen
+    ((&key title no-title-menu footmenu (js "") redir-uri) &body content)
+  (let ((tmenu (if no-title-menu nil '(menu "nav" *xarf-menu*))))
+    `(progn
+       (no-cache)
+       (with-html
+         (:html
+          (:head
+           (:title (fmt "~a" ,title))
+           (:link :rel "stylesheet" :type "text/css" :href "/static/xarf.css")
+           ((:script :type "text/javascript") (fmt "~a" ,js))
+           ,(if redir-uri `(:meta
+                            :http-equiv "refresh"
+                            :content (scat "0;url=" ,redir-uri))))
+          (:body
+           (:h1 ,tmenu (fmt "~a" ,title))
+           ((:div :class "main")
+            ,@content)
+           (footer ,footmenu)))))))
+
+
+(defmacro make-uri-dispatcher-and-handler (uri &body handler-fn-body)
+  `(progn
+     (defun ,uri ()
+       ,@handler-fn-body)
+     (push (create-prefix-dispatcher ,(format nil "/~(~a~)" uri) ',uri) *dispatch-table*)))
+
+
+(defun pull-static-file (file)
+  "Pull the contents of a file into a string."
+  (with-open-file (s file)
+    (let ((seq (make-string (file-length s))))
+      (read-sequence seq s)
+      seq)))
+
+
+(defun sha256hash (str)
+  (ironclad:byte-array-to-hex-string 
+   (ironclad:digest-sequence :sha256 (ironclad:ascii-string-to-byte-array str))))
+
+
+(defun sanitize (str)
+  (regex-replace-all "[\;\:\"\'\(\)\`\#\,\|\<\>]" str ""))
+
+
+(defun tz-dst-map (tz dst-p)
+  (let ((prefix (cdr (assoc tz '((5 . "E") (6 . "C") (7 . "M") (8 . "P")))))
+        (suffix (if dst-p "DT" "ST")))
+    (if prefix
+        (scat prefix suffix)
+        (scat "TZ" (princ-to-string tz) suffix))))
+
+
+(defun timestr ()
+  "Return the current system date/time as a string."
+  (multiple-value-bind (sec min hour day month year weekday dst-p tz)
+      (get-decoded-time)
+    (with-output-to-string (s)
+      (format s "~a ~d-~2,'0d-~2,'0d ~2,'0d:~2,'0d:~2,'0d ~a"
+              (nth weekday '("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+              year month day hour min sec
+              (tz-dst-map tz dst-p)))))
+
+
+(defun passbuffer (latest old-passwds)
+  "Appends latest to the end of old-passwds list, drops the oldest if needed."
+  (if (< (length old-passwds) *max-previous-passwords*)
+      (append old-passwds (list latest))
+      (append (nthcdr (1+ (- (length old-passwds) *max-previous-passwords*))
+                      old-passwds)
+              (list latest))))
+
+
+(defun eq+ (L)
+  "Returns (car L) if all elements of L are non-nil and eq"
+  (reduce #'(lambda (x y) (if (eq x y) x nil)) L :initial-value (car L)))
+
+
+(defun run-remote-cmd (usr@host rcmd &key (output :stream))
+  "Returns a process structure running 'rcmd' as usr on host via ssh"
+  (run-program
+   "ssh" `("-nq" "-o ConnectTimeout=10" "-o BatchMode=yes" ,usr@host ,rcmd)
+   :search t :wait nil :output output :error *message-log* :if-error-exists :append))
+
+
+(defmacro remote-slurp (usr@host rcmd &key (timeout 30) binary)
+  "Writes code to invoke rcmd as usr on host and return its output as a string or octet sequence"
+  (let ((fn (if binary 'flexi-streams:with-output-to-sequence 'with-output-to-string))
+        (tv (if binary #() "timeout")))
+    `(join-thread
+      (make-thread
+       (lambda () (,fn (s) (process-close
+                            (process-wait (run-remote-cmd ,usr@host ,rcmd :output s) t)))))
+      :default ,tv :timeout ,timeout)))
+
+
+(defun hoverlink (txt url)
+  (with-html-output (*standard-output*)
+    ((:a :class "qturl" :href url)
+     (str txt)
+     ((:span) (fmt "~a" url)))))
+
+
+(defmacro applink (app id)
+  (if (eq app 'wt)
+      `(hoverlink
+        (scat ,id " - " (wt-client-name ,id)) (make-wt-url ,id))
+      `(hoverlink
+        (scat ,id " - " (qt-client-name ,id)) (make-qt-url ,id))))

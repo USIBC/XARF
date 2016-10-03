@@ -1,0 +1,27 @@
+####################
+# XARF Environment
+####################
+
+umask 0027
+
+PATH=/bin:/usr/bin:/usr/local/bin
+
+#LD_LIBRARY_PATH=/path/to/auxiliary/lib64
+
+SBCL_HOME=/path/to/lib/sbcl
+
+SLIME_HOME=/path/to/slime
+
+XARF_HOME=/path/to/xarf
+
+HYDRA_HOME=/path/to/hydra
+
+XARF_WEB_PORT=19999
+
+SWANK_PORT=4005
+
+LANG=en_US
+
+unset LC_ALL
+
+export PATH LD_LIBRARY_PATH SBCL_HOME SLIME_HOME XARF_HOME HYDRA_HOME XARF_WEB_PORT SWANK_PORT LANG

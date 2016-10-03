@@ -1,0 +1,71 @@
+==================================================================
+ XARF -- the eXtensible Application Reporting Framework
+
+ Gather/process information from application hosts or databases
+ and present the results in graphical or tabular form via a
+ user-authenticated web interface with role based access control.
+
+ D. Racine 20080514
+==================================================================
+
+
+Configuration:
+
+See xarf-env and src/*config.lisp.
+
+To add, remove, or edit Quicktime/webTA instances, edit
+$XARF_HOME/src/(qt|wt)-config.lisp, then restart XARF.
+
+
+Process control:
+
+  $XARF_HOME/bin/start-xarf
+  $XARF_HOME/bin/stop-xarf
+
+
+To connect to XARF's REPL:
+
+  1. $XARF_HOME/bin/repl-xarf
+
+     -OR-
+
+     In emacs:
+     Open a connection to sbcl's SWANK server on local port 4005:
+     M-x slime-connect [RET]
+     127.0.0.1 [RET]
+     4005 [RET]
+
+
+  2. To exit the REPL without killing XARF's sbcl process: 
+     M-x slime-disconnect [RET]
+     C-x C-c
+
+
+  NOTES -- 
+
+    Emacs keyboard command notation: 'M-x' means to hit the 'x' key while
+    holding down 'Alt' (aka 'Meta'). Likewise, 'C-x' means to hit 'x' while
+    holding down 'Ctrl'. [RET] means hit 'Enter'.
+
+    Information regarding the configuration requirements for Emacs and
+    SLIME/SWANK on the host that runs XARF can be found in
+    $XARF_HOME/emacs-swank-cfg/.
+
+
+To see if XARF is runnning: ps -ef |grep sbcl |grep -v grep
+
+To see network ports on which it's listening: netstat -tulnp |grep sbcl
+
+
+System requirements:
+
+  Linux 2.6+ running on x86 or x86-64 architecture
+
+  SBCL 1.x or newer with threading support
+
+  Common Lisp libraries (deploy in XARF_HOME/extlib/):
+  hunchentoot, cl-who, cl-ppcre, ironclad, adw-charting, cl-smtp, cl-pass
+
+  OpenSSH, OpenSSL, bash
+
+  RRDTool, wget/curl as needed for site-specific reports

@@ -1,0 +1,17 @@
+One way to make a private key & self-signed SSL certificate:
+
+
+openssl genrsa -out privatekey.pem 1024
+
+openssl req -new -x509 -days 3650 -key privatekey.pem > cert.pem
+
+Use the DNS portion of XARF's URL as the Common Name.
+
+chmod 600 *pem
+
+
+$XARF_HOME/ssl/ sould contain the following files, each with 600 permissions:
+
+  privatekey.pem
+  cert.pem
+
