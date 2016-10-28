@@ -1,3 +1,6 @@
+20161027.1900
+  * improved color palette for load/performance graphs
+
 20160930.1930
   * Move remaining user+host names into src/*config.lisp
 

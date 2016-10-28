@@ -55,9 +55,9 @@ if [ "$GRAPHTYPE" == "a" ]; then
   DEF:t1=$RRD1:total:AVERAGE \
   DEF:t2=$RRD2:total:AVERAGE \
   DEF:t3=$RRD3:total:AVERAGE \
-  AREA:t1#00A000:'hostname1' \
-  AREA:t2#0030F0:'hostname2':STACK \
-  AREA:t3#777777:'hostname3':STACK
+  AREA:t1#66c2a5:'hostname1' \
+  AREA:t2#fc8d62:'hostname2':STACK \
+  AREA:t3#8da0cb:'hostname3':STACK
 else
   rrdtool graph - -a $IMGFORMAT -n "$FONT" -n WATERMARK:4: \
   --start "$START" --end "$END" \
@@ -81,7 +81,7 @@ else
   CDEF:tc=c1,c2,+,c3,+ \
   CDEF:td=d1,d2,+,d3,+ \
   CDEF:te=e1,e2,+,e3,+ \
-  AREA:te#F00000:'30+s' \
-  AREA:td#B0B000:'14-30s':STACK \
-  AREA:tc#0030F0:'6-14s':STACK \
-  AREA:tb#00A000:'2-6s':STACK ; fi
+  AREA:te#d7191c:'30+s' \
+  AREA:td#fdae61:'14-30s':STACK \
+  AREA:tc#abd9e9:'6-14s':STACK \
+  AREA:tb#2c7bb6:'2-6s':STACK ; fi
