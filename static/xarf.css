@@ -49,6 +49,7 @@ table.qtdir td
   {padding:3pt 14pt 3pt 14pt; vertical-align:middle;}
 table.qtdir td.pass {height:14pt; background-color:#94EF9F;}
 table.qtdir td.fail {height:14pt; background-color:#E69E96;}
+table.qtdir td.n {text-align:right;}
 table.qtdir th
   {background:#FFC77F; text-align:center;
   display:table-cell; padding:4pt;

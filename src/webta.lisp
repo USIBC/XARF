@@ -342,6 +342,6 @@
              ((:tr) ((:td) (applink wt (princ-to-string (car i))))
               (dolist (j *wt-ts-states*)
                 (let ((ct (second (find-if #'(lambda (x) (string= (car x) j)) (cdr i)))))
-                  (htm ((:td) (if ct (fmt "~a" ct) ""))))))))))))))
+                  (htm ((:td :class "n") (if ct (fmt "~a" ct) ""))))))))))))))
 
 ;;===< end wt-ts-status >===
