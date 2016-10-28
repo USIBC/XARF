@@ -68,7 +68,7 @@ for i in $IDS; do
   printf '(|%s|' $i
   while read L; do
     format "$L"
-    done <<<"$(egrep -o "$STATES [0-9][0-9]*" $i---out?.html)" || echo -n ' ("Saved" "*error*")'
+    done <<<"$(egrep -o "$STATES [0-9][0-9]*" $i---out?.html)" || echo -n ' ("Saved" "no data")'
   echo -n ') '; done
 
 echo ')' && cd $OWD && rm -rf $TD
