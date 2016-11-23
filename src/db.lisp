@@ -18,7 +18,7 @@
 ;; C:
 (defun add-user (&key name uid pass roles email)
   (when (and name uid pass)
-    (with-recursive-lock (*userdb-mutex*)
+    (with-mutex (*userdb-mutex*)
       (setq *xarf-users*
             (sort (cons (make-user :id uid :name name :email email
                                    :roles roles :pass pass :pass-change-time 0)
@@ -32,7 +32,7 @@
 ;; R:
 (defun get-all-users ()
   "Returns a copy of the current user list."
-  (with-recursive-lock (*userdb-mutex*) *xarf-users*))
+  (with-mutex (*userdb-mutex*) *xarf-users*))
 
 (defun get-user-record (uid)
   "Returns a copy of uid's user structure"
@@ -52,7 +52,7 @@
        (when pass (setf (user-pass target) pass))
        (when pass-ctime (setf (user-pass-change-time target) pass-ctime))
        (when prev-pws (setf (user-previous-passwords target) prev-pws))
-       (with-recursive-lock (*userdb-mutex*)
+       (with-mutex (*userdb-mutex*)
          (setq *xarf-users*
                (sort (cons target (remove uid *xarf-users* :key #'user-id :test #'eq))
                      #'string-lessp :key #'(lambda (x) (symbol-name (user-id x)))))
@@ -63,7 +63,7 @@
 
 ;; D:
 (defun remove-users (idlist)
-  (with-recursive-lock (*userdb-mutex*)
+  (with-mutex (*userdb-mutex*)
     (dolist (i idlist)
       (setq *xarf-users* (remove i *xarf-users* :key #'user-id :test #'eq)))
     (with-open-file (s (scat *xarf-home* "data/users")

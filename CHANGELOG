@@ -1,3 +1,6 @@
+20161122.1800
+  * replaced unnecessary recursive locks with non-recursive mutexes
+
 20161028.1600
   * right-justify numeric cells in wt-ts-status
 
