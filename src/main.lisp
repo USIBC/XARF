@@ -82,7 +82,7 @@
         (:title "XARF Login" :no-title-menu t)
       (and msg (htm (:div :class "msg" (fmt "~a" (get-msg msg)))))
       ((:form :id "login" :method "post" :action "/login")
-       ((:label) "User ID") (:input :type "text" :name "uid" :size 20) (:br)
+       ((:label) "User ID") (:input :type "text" :name "uid" :size 20 :autofocus t) (:br)
        ((:label) "Password") (:input :type "password" :name "pass" :size 20) (:br)
        (:input :type "submit" :value "Log In"))
       ((:div :class "msg2") ((:a :href "/reqreset") "Request a password reset email"))
@@ -126,7 +126,7 @@
         (:title "XARF Password Reset" :no-title-menu t)
       (and msg (htm (:div :class "msg" (fmt "~a" (get-msg msg)))))
       ((:form :id "login" :method "post" :action "/reqreset")
-       ((:label) "User ID") (:input :type "text" :name "uid" :size 20) (:br)
+       ((:label) "User ID") (:input :type "text" :name "uid" :size 20 :autofocus t) (:br)
        (:input :type "submit" :value "Request reset email")))))
 
 
@@ -167,9 +167,11 @@
        ((:label) "Changing password of '" (fmt "~a" (suid2str uid)) "':") (:br)
        (unless (session-value 'reset)
          (htm ((:label) "Current password")
-              (:input :type "password" :name "cpass" :size 20) (:br)))
-       ((:label) "New password") (:input :type "password" :name "npass" :size 20) (:br)
-       ((:label) "New password (again)") (:input :type "password" :name "npass2" :size 20) (:br)
+              (:input :type "password" :name "cpass" :size 20 :autofocus t) (:br)))
+       ((:label) "New password")
+       (:input :type "password" :name "npass" :size 20 :autofocus (session-value 'reset)) (:br)
+       ((:label) "New password (again)")
+       (:input :type "password" :name "npass2" :size 20) (:br)
        (:input :type "submit" :value "Change Password")))))
 
 

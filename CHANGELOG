@@ -1,3 +1,6 @@
+20170105.1630
+  * autofocus login and password change forms
+
 20161122.1800
   * replaced unnecessary recursive locks with non-recursive mutexes
 
