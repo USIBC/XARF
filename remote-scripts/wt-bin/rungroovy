@@ -16,7 +16,7 @@ PRODVIP=prod_vipname.domain
 
 
 PRG=$(basename $0)
-TMPBASE=/tmp/$PRG-pid$$
+TMP="$(mktemp -d /tmp/$PRG.XXXXXX)"
 
 usage() { printf "
   Usage: $PRG [-i inputfile] script.groovy|- id [...]\n
@@ -33,7 +33,7 @@ usage() { printf "
   To run a script fed to $PRG's standard input, use a '-' character
   in place of the 'script.groovy' parameter.\n\n"; exit 1; }
 
-die() { echo "$PRG: $1, quitting" >&2; rm -rf $TMPBASE-*; exit 1; }
+die() { echo "$PRG: $1, quitting" >&2; rm -rf $TMP; exit 1; }
 
 skip() { echo "$PRG: $1, skipping" >&2; }
 
@@ -94,7 +94,7 @@ groovyexec() {
   LOGIN_URL="$TARGET/Login"
   SE_URL="$TARGET/ScriptExecution"
 
-  mkdir $TMPBASE-$1 && cd $TMPBASE-$1 || { skip "$TMPBASE-$1 creation failed"; return 1; }
+  mkdir $TMP/$1 && cd $TMP/$1 || { skip "$TMP/$1 creation failed"; return 1; }
 
   log_into $1 $LOGIN_URL || return 1
 
@@ -121,6 +121,7 @@ groovyexec() {
 while [ "x$1" != "x" ]; do
   ID=$1; shift
   [[ $ID =~ ^[0-9]{3,4}$ ]] || { skip "bad appid '$ID'"; XS=1; continue; }
-  groovyexec $ID || XS=1 & done
-
-wait && cd $OWD && rm -rf $TMPBASE-* && exit $XS
+  groovyexec $ID || touch $TMP/err$ID & done
+wait
+ls $TMP/err* >/dev/null 2>&1 && XS=1
+cd $OWD; rm -rf $TMP; exit $XS
