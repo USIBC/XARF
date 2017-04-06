@@ -1,9 +1,9 @@
 #!/bin/bash
 # D. Racine 20160308
 
-[ -z ${XARF_HOME+x} ] && { echo XARF_HOME is not set, quitting; exit 1; }
+[ -z ${XARF_HOME+x} ] && { echo "error: XARF_HOME is not set"; exit 1; }
 
-. $XARF_HOME/xarf-env
+. "$XARF_HOME/xarf-env" || exit 1
 
 MSG="To exit without killing xarf: M-x slime-disconnect [RET] C-x C-c"
 

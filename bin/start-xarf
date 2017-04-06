@@ -7,7 +7,7 @@ die() { echo "$(basename $0): $1" >&$2; exit $3; }
 
 [ -z ${XARF_HOME+x} ] && die "error: XARF_HOME is not set" 2 1
 
-. "$XARF_HOME/xarf-env"
+. "$XARF_HOME/xarf-env" || exit 1
 
 trap "" SIGCHLD  # prevents process substitution zombies
 
