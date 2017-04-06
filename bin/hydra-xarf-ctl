@@ -26,8 +26,8 @@ start() {
 
 stop() {
   local N=0
-  $HYDRA_HOME/bin/stop-hydra && echo "hydra stop signaled `date`"
-  $XARF_HOME/bin/stop-xarf && echo "XARF stop signaled `date`"
+  $HYDRA_HOME/bin/stop-hydra & echo "hydra stop signaled `date`"
+  $XARF_HOME/bin/stop-xarf & echo "XARF stop signaled `date`"
   while pgrep -f 'sbcl.*(hydra|xarf)$'; do 
     [ $N -gt 15 ] && {
       echo "shutdown timeout, issuing pkill -9 -f 'sbcl.*(hydra|xarf)$'"

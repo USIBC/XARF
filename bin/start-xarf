@@ -3,22 +3,17 @@
 # Uses definitions in XARF_HOME/xarf-env
 # D. Racine 20160302
 
-[ -z ${XARF_HOME+x} ] && { echo XARF_HOME is not set, quitting; exit 1; }
+die() { echo "$(basename $0): $1" >&$2; exit $3; }
 
-# Bail out if it looks like xarf is already running
-P="$(pgrep -f "sbcl.*xarf")" && { printf "
-  There appears to be a XARF sbcl process already running as PID $P\n
-  A new instance of XARF has *not* been started.\n\n"; exit 1; }
+[ -z ${XARF_HOME+x} ] && die "error: XARF_HOME is not set" 2 1
 
-. $XARF_HOME/xarf-env
+. "$XARF_HOME/xarf-env"
 
-# Prevent process substitution zombies
-trap "" SIGCHLD
+trap "" SIGCHLD  # prevents process substitution zombies
 
-LOGDIR=$XARF_HOME/log
-[ -d "$LOGDIR" ] || mkdir $LOGDIR || { echo mkdir $LOGDIR failed >&2; exit 1; }
+mkdir -pm 700 "$XARF_HOME/log" || exit 1
 
-L=$LOGDIR/sbcl.xarf
+L="$XARF_HOME/log/sbcl.xarf"
 
 N=/dev/null
 
@@ -33,10 +28,11 @@ S="\
   (princ \"== XARF started at \")
   (loop (format t \"mark: ~a~%\" (timestr)) (sleep 900))"
 
-nohup sbcl --lose-on-corruption --userinit <(echo "$S") --eval "'xarf" <$N >$L 2>&1 &
+netstat -lntu |egrep -q ":($XARF_WEB_PORT|$SWANK_PORT)  *[0-9:]" \
+  && die "no action taken: a port defined in $XARF_HOME/xarf-env is in use" 2 1
+
+nohup sbcl --lose-on-corruption --userinit <(echo "$S") --eval "'xarf" <$N >"$L" 2>&1 &
 
 sleep 3
 
-P="$(pgrep -fo "sbcl.*xarf")" \
-  && { echo "sbcl PID $P started, writing to $L"; exit 0; } \
-  || { echo "sbcl quit, see $L"; exit 1; }
+kill -0 $! && die "sbcl PID $! started, writing to $L" 1 0 || die "sbcl quit, see $L" 2 1
