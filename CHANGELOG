@@ -1,3 +1,6 @@
+20170407.1700
+  * repl-xarf: quit if swank listener not found
+
 20170405.1900
   * cleanup: process control scripts
 

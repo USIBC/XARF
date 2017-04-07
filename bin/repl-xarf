@@ -1,7 +1,7 @@
 #!/bin/bash
 # D. Racine 20160308
 
-[ -z ${XARF_HOME+x} ] && { echo "error: XARF_HOME is not set"; exit 1; }
+[ -z ${XARF_HOME+x} ] && { echo "error: XARF_HOME is not set" >&2; exit 1; }
 
 . "$XARF_HOME/xarf-env" || exit 1
 
@@ -11,8 +11,10 @@ REPL="\
 (progn
   (add-hook 'slime-connected-hook
             (lambda () (delete-other-windows)
-                       (setq minibuffer-message-timeout 9)
+                       (setq minibuffer-message-timeout 20)
                        (minibuffer-message \"$MSG\")))
   (slime-connect \"127.0.0.1\" $SWANK_PORT))"
 
-exec emacs --color=no --eval="$REPL"
+netstat -lntup 2>/dev/null |grep -q ":$SWANK_PORT  *[0-9:].*sbcl" \
+  && exec emacs --color=no --eval="$REPL" \
+  || { echo "Swank listener not found. No REPL :(" >&2; exit 1; }
