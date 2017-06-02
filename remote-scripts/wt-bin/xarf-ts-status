@@ -3,8 +3,8 @@
 #
 # s/Nbc/Ibc/g to accommodate a class name change in webTA v4.1.29
 # D. Racine 20151117
-#
 # Maintain sane output on stdout when rungroovy fails. D. Racine 20160107
+# Use schlep instead of rungroovy. D. Racine 20170601
 
 . $HOME/WT-env
 PRG=$(basename $0)
@@ -34,7 +34,7 @@ YR=$(cut -d- -f1 <<<"$1")
 shift && IDS="$*"
 
 OWD=$PWD
-TD=/tmp/$PRG-$$-$(date '+%Y%m%d.%H%M%S')
+TD="$(mktemp -d /tmp/$PRG.XXXXXX)"
 
 GS="\
   int ppYear = $YR; int ppNum = $PP;
@@ -56,9 +56,9 @@ GS="\
   return \"done\";"
 
 
-mkdir $TD && cd $TD || exit 1
+cd $TD || exit 1
 
-RE="$(rungroovy - $IDS <<<"$GS" 2>&1)"
+RE="$(schlep rungroovy - $IDS <<<"$GS" 2>&1)"
 
 [ "x$RE" != "x" ] && echo "$RE" >&2
 
@@ -68,7 +68,7 @@ for i in $IDS; do
   printf '(|%s|' $i
   while read L; do
     format "$L"
-    done <<<"$(egrep -o "$STATES [0-9][0-9]*" $i---out?.html)" || echo -n ' ("Saved" "no data")'
+    done <<<"$(egrep -o "$STATES [0-9][0-9]*" $i-*-out.html)" || echo -n ' ("Saved" "no data")'
   echo -n ') '; done
 
 echo ')' && cd $OWD && rm -rf $TD
