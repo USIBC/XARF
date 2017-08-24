@@ -292,6 +292,7 @@
          (ids (append (qt-ids 'test-nr-auto)
                       (qt-ids 'test-nr-func)
                       (qt-ids 'test-em-func)
+                      (qt-ids 'prod)
                       (qt-ids 'test-em-auto)))
          (rcmd (scat "bin/xarf-trans " appid " " type))
          (result ""))
