@@ -15,8 +15,8 @@
 (defstruct wt-node id hostname webfarm)
 
 (defparameter *wt-webfarms*
-  '((test . "https://test_vip_dns_name.domain/<ID>")
-    (prod . "https://prod_vip_dns_name.domain/<ID>")))
+  '((test . "https://test_vip_dns_name.domain/<ID>/Login")
+    (prod . "https://prod_vip_dns_name.domain/<ID>/Login")))
 
 (defparameter *wt-instance-types*
   '((trn-dmo . "4")
