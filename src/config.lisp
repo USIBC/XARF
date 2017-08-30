@@ -38,37 +38,38 @@
 (defparameter *from-address* "XARF_noreply@nospam.gov")
 
 
-;; Menu definitions (uri name [submenu]):
+;; Menu definitions ((label url [submenu]) ...)
 (defparameter *xarf-menu*
-  '(("/" "Main Menu"
-     (("/"
-       "Quicktime"
-       (("/qtappcfg" "app_cfg Viewer")
-        ("/qstatus" "App-tier Status Summary")
-        ("/indirect?u=/qt-dbstatus&t=Quicktime+DB+Status" "Database Status")
-        ("/indirect?u=/qt-directory&t=QT+Instance+Directory" "Instance Directory")
-        ("/jserver-utilization" "Jserver Utilization")
-        ("/listimports" "List Import Data")
-        ("/qt-load-graphs" "Load & Performance")
-        ("/ts-status" "Timesheet Status")
-        ("/webtrans" "Trans/Amend Extractor")))
-      ("/streports" "StarTeam")
-      ("/"
-       "WebTA"
-       (("/wtusercount" "Active User Counts")
-        ("/wtstatus" "App-tier Status Summary")
-        ("/bulkgroovy" "Bulk Groovy Reports")
-        ("/indirect?u=/wt-dbstatus&t=WebTA+DB+Status" "Database Status")
-        ("/indirect?u=/wt-directory&t=WebTA+Instance+Directory" "Instance Directory")
-        ("/wt-load-graphs" "Load & Performance")
-        ("/wt-ts-status" "Timesheet Status")))
-      ("/passwd" "Change Password")
-      ("/admin" "Administration")
-      ("/about" "About the XARF")
-      ("/logout" "Log Out")))))
+  '(("Main Menu"
+     "/"
+     (("Quicktime"
+       "/"
+       (("app_cfg Viewer" "/qtappcfg")
+        ("App-tier Status Summary" "/qstatus")
+        ("Database Status" "/indirect?u=/qt-dbstatus&t=Quicktime+DB+Status")
+        ("Instance Directory" "/indirect?u=/qt-directory&t=QT+Instance+Directory")
+        ("Jserver Utilization" "/jserver-utilization")
+        ("List Import Data" "/listimports")
+        ("Load & Performance" "/qt-load-graphs")
+        ("Timesheet Status" "/ts-status")
+        ("Trans/Amend Extractor" "/webtrans")))
+      ("StarTeam" "/streports")
+      ("WebTA"
+       "/"
+       (("Active User Counts" "/wtusercount")
+        ("App-tier Status Summary" "/wtstatus")
+        ("Bulk Groovy Reports" "/bulkgroovy")
+        ("Database Status" "/indirect?u=/wt-dbstatus&t=WebTA+DB+Status")
+        ("Instance Directory" "/indirect?u=/wt-directory&t=WebTA+Instance+Directory")
+        ("Load & Performance" "/wt-load-graphs")
+        ("Timesheet Status" "/wt-ts-status")))
+      ("Change Password" "/passwd")
+      ("Administration" "/admin")
+      ("About the XARF" "/about")
+      ("Log Out" "/logout")))))
 
 
-(defparameter *footer-menu* '(("#" "Top") ("/" "Main Menu") ("/logout" "Log Out")))
+(defparameter *footer-menu* '(("Top" "#") ("Main Menu" "/") ("Log Out" "/logout")))
 
 
 ;; Login screen footer:

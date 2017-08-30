@@ -15,26 +15,24 @@
 
 
 (defun menu (cssid menulist)
-  "Creates a simple html menu as a nested <ul id='cssid'>.
-  menulist should be of the form '((uri text submenu) ...)"
-  (with-html-output
-      (*standard-output*)
-    (cond
-      ((null menulist) nil)
-      (t (htm ((:ul :id cssid)
-               (dolist (i menulist)
-                 (htm ((:li) ((:a :href (first i)) (str (second i)))
-                       (menu cssid (third i)))))))))))
+  "Writes an html menu as a nested <ul id='cssid'> to stdout.
+  menulist should be of the form ((label url [sub-menulist]) ...)"
+  (when menulist
+    (with-html-output (*standard-output*)
+      (htm ((:ul :id cssid)
+            (dolist (i menulist)
+              (htm ((:li) ((:a :href (second i)) (str (car i)))
+                    (menu cssid (third i))))))))))
 
 
 (defun footer (fmenu)
-  "If fmenu is non-nil, creates an html footer containing fmenu.
-  fmuenu should be of the form '((uri text) ...)"
+  "Writes an html footer containing fmenu to stdout.
+  fmuenu should be of the form ((label url) ...)"
   (when fmenu
     (with-html-output (*standard-output*)
       ((:h5)
        (dolist (i fmenu)
-         (htm ((:a :href (first i)) (str (second i)))))
+         (htm ((:a :href (second i)) (str (car i)))))
        (:p "You are logged in as '"
            (fmt "~a" (suid2str (session-value 'uid))) "'")))))
 
