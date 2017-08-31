@@ -43,7 +43,7 @@
   '(("Main Menu"
      "/"
      (("Quicktime"
-       "/"
+       "/menu?k=Quicktime"
        (("app_cfg Viewer" "/qtappcfg")
         ("App-tier Status Summary" "/qstatus")
         ("Database Status" "/indirect?u=/qt-dbstatus&t=Quicktime+DB+Status")
@@ -55,7 +55,7 @@
         ("Trans/Amend Extractor" "/webtrans")))
       ("StarTeam" "/streports")
       ("WebTA"
-       "/"
+       "/menu?k=WebTA"
        (("Active User Counts" "/wtusercount")
         ("App-tier Status Summary" "/wtstatus")
         ("Bulk Groovy Reports" "/bulkgroovy")

@@ -14,18 +14,26 @@
      ,@body))
 
 
-(defun menu (cssid menulist)
+(defun find-menu-item (key menu)
+  "Searches menu and returns the first item whose label matches key. A menu item
+  has the form (label url [menu]). A menu is a list of one or more menu items."
+  (or (find key menu :test #'string= :key #'car)
+      (loop for i in (mapcar #'third menu)
+         when (find-menu-item key i) return it)))
+
+
+(defun html-menu (cssid menu)
   "Writes an html menu as a nested <ul id='cssid'> to stdout.
-  menulist should be of the form ((label url [sub-menulist]) ...)"
-  (when menulist
+  menu should be of the form ((label url [menu]) ...)"
+  (when menu
     (with-html-output (*standard-output*)
       (htm ((:ul :id cssid)
-            (dolist (i menulist)
+            (dolist (i menu)
               (htm ((:li) ((:a :href (second i)) (str (car i)))
-                    (menu cssid (third i))))))))))
+                    (html-menu cssid (third i))))))))))
 
 
-(defun footer (fmenu)
+(defun html-footer (fmenu)
   "Writes an html footer containing fmenu to stdout.
   fmuenu should be of the form ((label url) ...)"
   (when fmenu
@@ -39,7 +47,7 @@
 
 (defmacro make-xarf-html-screen
     ((&key title no-title-menu footmenu (js "") redir-uri) &body content)
-  (let ((tmenu (if no-title-menu nil '(menu "nav" *xarf-menu*))))
+  (let ((tmenu (if no-title-menu nil '(html-menu "nav" *xarf-menu*))))
     `(progn
        (no-cache)
        (with-html
@@ -55,7 +63,7 @@
            (:h1 ,tmenu (fmt "~a" ,title))
            ((:div :class "main")
             ,@content)
-           (footer ,footmenu)))))))
+           (html-footer ,footmenu)))))))
 
 
 (defmacro make-uri-dispatcher-and-handler (uri &body handler-fn-body)

@@ -50,7 +50,18 @@
   (session-check index)
   (make-xarf-html-screen (:title "XARF Main Menu" :footmenu *footer-menu*)
     (and msg (htm (:div :class "msg" (fmt "~a" (get-msg (sanitize msg))))))
-    (:div :class "flatmenu" (menu "flat" *xarf-menu*))))
+    (:div :class "flatmenu" (html-menu "flat" *xarf-menu*))))
+
+
+(make-uri-dispatcher-and-handler menu
+  (session-check menu)
+  (let* ((key (sanitize (get-parameter "k")))
+         (msg (sanitize (get-parameter "msg")))
+         (i (find-menu-item  key *xarf-menu*))
+         (m (if i (list i) *xarf-menu*)))
+    (make-xarf-html-screen (:title (scat key " Menu") :footmenu *footer-menu*)
+      (and msg (htm (:div :class "msg" (fmt "~a" (get-msg (sanitize msg))))))
+      (:div :class "flatmenu" (html-menu "flat" m)))))
 
 
 (make-uri-dispatcher-and-handler about
