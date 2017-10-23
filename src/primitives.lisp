@@ -130,14 +130,21 @@
    :search t :wait nil :output output :error *message-log* :if-error-exists :append))
 
 
+(defmacro with-xarf-pkg (&body body)
+  `(let ((*package* (find-package :xarf)))
+     ,@body))
+
+
 (defmacro remote-slurp (usr@host rcmd &key (timeout 30) binary)
   "Writes code to invoke rcmd as usr on host and return its output as a string or octet sequence"
   (let ((fn (if binary 'flexi-streams:with-output-to-sequence 'with-output-to-string))
         (tv (if binary #() "timeout")))
     `(join-thread
       (make-thread
-       (lambda () (,fn (s) (process-close
-                            (process-wait (run-remote-cmd ,usr@host ,rcmd :output s) t)))))
+       (lambda ()
+         (with-xarf-pkg
+           (,fn (s) (process-close
+                     (process-wait (run-remote-cmd ,usr@host ,rcmd :output s) t))))))
       :default ,tv :timeout ,timeout)))
 
 

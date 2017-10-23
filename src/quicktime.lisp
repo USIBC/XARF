@@ -68,7 +68,7 @@
 
 (defun start-qt-test-thread (id)
   "Returns a thread running test-qt-db and test-qt-url on id"
-  (make-thread (lambda () (list (test-qt-db id) (test-qt-url id)))))
+  (make-thread (lambda () (with-xarf-pkg (list (test-qt-db id) (test-qt-url id))))))
 
 
 (defun test-all-qt (idlist)
@@ -109,7 +109,7 @@
 
 (defun start-remote-qt-detail-thread (qtnode)
   "Starts & returns a thread running 'remote-qt-detail' on qtnode"
-  (make-thread (lambda () (remote-qt-detail qtnode))))
+  (make-thread (lambda () (with-xarf-pkg (remote-qt-detail qtnode)))))
 
 
 (defun all-remote-qt-detail (list-of-nodes)

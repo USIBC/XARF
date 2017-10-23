@@ -8,7 +8,7 @@ die() { echo "$(basename $0): $1" >&$2; exit $3; }
 
 . "$XARF_HOME/xarf-env" || exit 1
 
-QUITCMD='00003d(:emacs-rex (swank:interactive-eval "(clean-quit)") nil t 1)'
+QUITCMD='000043(:emacs-rex (swank:interactive-eval "(xarf::clean-quit)") nil t 1)'
 
 netstat -lntup 2>/dev/null |grep -q ":$SWANK_PORT  *[0-9:].*sbcl" \
   || die "no action taken: swank listener not found" 2 1

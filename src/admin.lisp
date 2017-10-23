@@ -5,7 +5,7 @@
 
 (make-uri-dispatcher-and-handler admin
   (session-check admin)
-  (role-check admin :required-role-list '(admin) :refusal-destination "/?msg=10")
+  (role-check admin :required-role-list '(admin) :refusal-destination "/xarf?msg=10")
   (let ((fn (sanitize (post-parameter "fn")))
         (name (sanitize (post-parameter "name")))
         (eml (sanitize (post-parameter "eml")))
@@ -87,7 +87,7 @@
 
 (make-uri-dispatcher-and-handler edit-user
   (session-check edit-user)
-  (role-check edit-user :required-role-list '(admin) :refusal-destination "/?msg=10")
+  (role-check edit-user :required-role-list '(admin) :refusal-destination "/xarf?msg=10")
   (let* ((uid (sanitize (post-parameter "uid")))
          (newname (sanitize (post-parameter "newname")))
          (neweml (sanitize (post-parameter "neweml")))

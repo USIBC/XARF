@@ -4,7 +4,8 @@
   :depends-on (:cl-who :cl-ppcre :hunchentoot :ironclad :adw-charting-vecto :cl-smtp :cl-pass)
   :components ((:file "packages")
                (:file "config" :depends-on ("packages"))
-               (:file "primitives" :depends-on ("config"))
+               (:file "dash-config" :depends-on ("config"))
+               (:file "primitives" :depends-on ("dash-config"))
                (:file "db" :depends-on ("primitives"))
                (:file "main" :depends-on ("db"))
                (:file "admin" :depends-on ("main"))
@@ -15,4 +16,9 @@
                (:file "webta" :depends-on ("wt-config"))
                (:file "st-config" :depends-on ("main"))
                (:file "starteam" :depends-on ("st-config"))
-               (:file "server" :depends-on ("admin" "jserver-util" "webta" "starteam"))))
+               (:file "dashboard" :depends-on ("quicktime" "webta"))
+               (:file "server" :depends-on ("admin"
+                                            "jserver-util"
+                                            "webta"
+                                            "starteam"
+                                            "dashboard"))))

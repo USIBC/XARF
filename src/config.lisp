@@ -7,10 +7,6 @@
 (defparameter *xarf-home* (format nil "~A/" (posix-getenv "XARF_HOME")))
 
 
-;; Base URL of XARF for emailed links. https://name[:port] (exclude trailing '/')
-(defparameter *base-url* "https://localhost:19999")
-
-
 ;; Log files:
 (defparameter *access-log* (format nil "~Alog/access" *xarf-home*))
 (defparameter *message-log* (format nil "~Alog/messages" *xarf-home*))
@@ -37,12 +33,17 @@
 (defparameter *relay-host* "relay")
 (defparameter *from-address* "XARF_noreply@nospam.gov")
 
+;; Base URL of XARF -- used to construct emailed URLs.
+;; Exclude trailing '/':  https://name.domain[:port]
+(defparameter *base-url* "https://localhost:19999")
+
 
 ;; Menu definitions ((label url [submenu]) ...)
 (defparameter *xarf-menu*
-  '(("Main Menu"
-     "/"
-     (("Quicktime"
+  '(("XARF Menu"
+     "/xarf"
+     (("PPSD Dashboard" "/")
+      ("Quicktime"
        "/menu?k=Quicktime"
        (("app_cfg Viewer" "/qtappcfg")
         ("App-tier Status Summary" "/qstatus")
@@ -69,7 +70,8 @@
       ("Log Out" "/logout")))))
 
 
-(defparameter *footer-menu* '(("Top" "#") ("Main Menu" "/") ("Log Out" "/logout")))
+(defparameter *footer-menu*
+  '(("Top" "#") ("XARF Menu" "/xarf") ("PPSD Dashboard" "/") ("Log Out" "/logout")))
 
 
 ;; Login screen footer:

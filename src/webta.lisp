@@ -70,7 +70,7 @@
 
 (defun start-wt-test-thread (id)
   "Returns a thread running test-wt-db and test-wt-url on id"
-  (make-thread (lambda () (list (test-wt-db id) (test-wt-url id)))))
+  (make-thread (lambda () (with-xarf-pkg (list (test-wt-db id) (test-wt-url id))))))
 
 
 (defun test-all-wt (idlist)
@@ -113,7 +113,7 @@
 
 (defun start-remote-wt-detail-thread (wtnode)
   "Starts & returns a thread running 'remote-wt-detail' on wtnode"
-  (make-thread (lambda () (remote-wt-detail wtnode))))
+  (make-thread (lambda () (with-xarf-pkg (remote-wt-detail wtnode)))))
 
 
 (defun all-remote-wt-detail (list-of-nodes)

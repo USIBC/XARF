@@ -10,7 +10,8 @@ MSG="To exit without killing xarf: M-x slime-disconnect [RET] C-x C-c"
 REPL="\
 (progn
   (add-hook 'slime-connected-hook
-            (lambda () (delete-other-windows)
+            (lambda () (slime-repl-set-package \"xarf\")
+                       (delete-other-windows)
                        (setq minibuffer-message-timeout 20)
                        (minibuffer-message \"$MSG\")))
   (slime-connect \"127.0.0.1\" $SWANK_PORT))"

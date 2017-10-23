@@ -30,7 +30,7 @@
          (t nil))))
 
 
-(defmacro role-check (blockname &key required-role-list (refusal-destination "/"))
+(defmacro role-check (blockname &key required-role-list (refusal-destination "/xarf"))
   `(unless (subsetp ,required-role-list
                     (user-roles (get-user-record (session-value 'uid))))
      (redirect ,refusal-destination)
@@ -46,8 +46,8 @@
       (t nil))))
 
 
-(define-easy-handler (index :uri "/") (msg)
-  (session-check index)
+(define-easy-handler (xarf :uri "/xarf") (msg)
+  (session-check xarf)
   (make-xarf-html-screen (:title "XARF Main Menu" :footmenu *footer-menu*)
     (and msg (htm (:div :class "msg" (fmt "~a" (get-msg (sanitize msg))))))
     (:div :class "flatmenu" (html-menu "flat" *xarf-menu*))))
@@ -56,11 +56,9 @@
 (make-uri-dispatcher-and-handler menu
   (session-check menu)
   (let* ((key (sanitize (get-parameter "k")))
-         (msg (sanitize (get-parameter "msg")))
          (i (find-menu-item  key *xarf-menu*))
          (m (if i (list i) *xarf-menu*)))
     (make-xarf-html-screen (:title (scat key " Menu") :footmenu *footer-menu*)
-      (and msg (htm (:div :class "msg" (fmt "~a" (get-msg (sanitize msg))))))
       (:div :class "flatmenu" (html-menu "flat" m)))))
 
 
@@ -85,12 +83,12 @@
          (start-session) (setf (session-value 'uid) uid)
          (log-message* :info "~a login from ~a" uid (real-remote-addr))
          (if (< (- *max-password-age* *password-warn*) (password-age uid) *max-password-age*)
-             (redirect "/?msg=14")
-             (redirect "/"))
+             (redirect "/xarf?msg=14")
+             (redirect "/xarf"))
          (return-from login))
         (t (setq msg "2"))))
-    (make-xarf-html-screen
-        (:title "XARF Login" :no-title-menu t)
+    (make-xarf-html-screen (:title "XARF Login" :no-title-menu t)
+      (html-menu "nav" *dash-menu*)
       (and msg (htm (:div :class "msg" (fmt "~a" (get-msg msg)))))
       ((:form :id "login" :method "post" :action "/login")
        ((:label) "User ID") (:input :type "text" :name "uid" :size 20 :autofocus t) (:br)
@@ -104,7 +102,7 @@
   (let ((sid (sanitize (get-parameter "i"))) req)
     (cond
       ((not (setq req (gethash sid *reset-tbl*)))
-       (redirect "/") (return-from reset))
+       (redirect "/xarf") (return-from reset))
       ((> (- (get-universal-time) (cadr req)) 7200)
        (remhash sid *reset-tbl*) (redirect "/login?msg=22") (return-from reset))
       (t
@@ -167,7 +165,7 @@
          (modify-user uid :pass (hash npass) :pass-ctime (get-universal-time)
                       :prev-pws (passbuffer (user-pass urec) (user-previous-passwords urec)))
          (setf (session-value 'reset) nil)
-         (redirect "/?msg=4")
+         (redirect "/xarf?msg=4")
          (return-from passwd))
         (t
          (setq msg "5"))))
@@ -191,7 +189,7 @@
   (let ((uri (sanitize (get-parameter "u")))
         (title (sanitize (get-parameter "t"))))
     (if (or (not uri) (scan "indirect" uri))
-        (redirect "/")
+        (redirect "/xarf")
         (make-xarf-html-screen
             (:title title :footmenu *footer-menu* :redir-uri uri)
           (:h4 (fmt "~a" "Gathering report data..."))

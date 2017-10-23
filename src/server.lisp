@@ -1,6 +1,17 @@
 ;;; server.lisp -- XARF web server, URIs, & dispatchers
 ;;; D. Racine, 20070511
 
+
+;; Ensure hunchentoot worker threads inherit their caller's package binding
+;; ref. https://stackoverflow.com/a/18244557
+(in-package :hunchentoot)
+(defmethod start-thread ((taskmaster one-thread-per-connection-taskmaster)
+                         thunk &key name)
+  (let* ((package-name (package-name *package*)) ;calling thread's current package
+         (initial-bindings `((*package* . (find-package ,package-name)))))
+    (bt:make-thread thunk :name name :initial-bindings initial-bindings)))
+
+
 (in-package :xarf)
 
 (defparameter *static-uri* "/static/")

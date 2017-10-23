@@ -1,3 +1,21 @@
+20171005.1900
+  * explicitly bind *package* to :xarf in all threads
+
+20170926.1900
+  * cleanup *base-url* in src/config.lisp
+
+20170922.1300
+  * correct a few XARF-specific redirects to "/xarf" vs "/"
+
+20170911.1730
+  * cleanup xarf.asd; renamed XARF Menu
+
+20170911.1600
+  * put Dashboard at "/"
+
+20170911.1400
+  * added 'PPSD Dashboard' menu
+
 20170830.1900
   * submenu handling
 
