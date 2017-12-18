@@ -45,7 +45,8 @@
      (("PPSD Dashboard" "/")
       ("Quicktime"
        "/menu?k=Quicktime"
-       (("app_cfg Viewer" "/qtappcfg")
+       (("Active User Counts" "/qtusercount")
+        ("app_cfg Viewer" "/qtappcfg")
         ("App-tier Status Summary" "/qstatus")
         ("Database Status" "/indirect?u=/qt-dbstatus&t=Quicktime+DB+Status")
         ("Instance Directory" "/indirect?u=/qt-directory&t=QT+Instance+Directory")

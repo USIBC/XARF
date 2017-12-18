@@ -361,3 +361,10 @@
                    (str i) " - " (str (qt-client-name i)))))))
          ((:td) (:input :type "submit" :value "Submit Query")))))
       (when id (htm ((:pre) (fmt "~a" result)))))))
+
+
+(make-uri-dispatcher-and-handler qtusercount
+  (session-check qtusercount)
+  (make-xarf-html-screen (:title "Quicktime Active User Counts" :footmenu *footer-menu*)
+    (:pre (fmt "~a" (remote-slurp (scat *qt-ssh-user* "@" (car (qt-nodes 'prod)))
+                                  "bin/active-user-counts")))))
