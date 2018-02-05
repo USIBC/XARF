@@ -22,7 +22,7 @@ while [ "$1" ]; do
   ID="$1"; shift
 
   CXSTRING="$(getcxstring -t $ID)" \
-  || { echo "$(basename $0): getcxstring failed, skipping $ID" >&2; continue; }
+  || { echo "$(basename $0): getcxstring failed, skipping $ID" >&2; XS=1; continue; }
 
   SCHEMA="$(cut -d/ -f1 <<<"$CXSTRING")"
   DB="$(cut -d/ -f5 <<<"$CXSTRING")"
