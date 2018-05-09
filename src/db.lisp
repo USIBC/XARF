@@ -32,10 +32,10 @@
   (with-userdb (x) (lmdb:del x (str2vec keystr))))
 
 (defun userdb-dump ()
-  (let (res)
+  (let (r)
     (with-userdb (x) (lmdb:do-pairs (x k v)
-                       (pushnew (cons (vec2str k) (vec2str v)) res :test #'equal)))
-    res))
+                       (pushnew (cons (vec2str k) (vec2str v)) r :test #'equal)))
+    (nreverse r)))
 
 ;; C:
 (defun add-user (&key name uid pass roles email)
@@ -48,26 +48,30 @@
 ;; R:
 (defun get-all-users ()
   "Reads user DB content into a list of user structures"
-  (sort (mapcar #'read-from-string (mapcar #'cdr (userdb-dump)))
-        #'string-lessp :key #'(lambda (x) (symbol-name (user-id x)))))
+  (mapcar #'read-from-string (mapcar #'cdr (userdb-dump))))
 
 (defun get-user-record (uid)
   "Returns uid's user structure"
   (let ((s (userdb-get (suid2str uid)))) (when s (read-from-string s))))
 
 ;; U:
-(defun modify-user (uid &key name email (roles nil roles-supplied) pass pass-ctime prev-pws)
+(defun modify-user (uid &key
+                          (name nil name-sup)
+                          (email nil email-sup)
+                          (roles nil roles-sup)
+                          (pass nil pass-sup)
+                          (pass-ctime nil pass-ctime-sup)
+                          (prev-pws nil prev-pws-sup))
   "Replaces uid's record with updates to the specified fields."
-  (let ((target (get-user-record uid)))
-    (cond
-      ((null target) nil)
-      (t (when name (setf (user-name target) name))
-         (when email (setf (user-email target) email))
-         (when roles-supplied (setf (user-roles target) roles))
-         (when pass (setf (user-pass target) pass))
-         (when pass-ctime (setf (user-pass-change-time target) pass-ctime))
-         (when prev-pws (setf (user-previous-passwords target) prev-pws))
-         (userdb-put (suid2str uid) (prin1-to-string target))))))
+  (let ((u (get-user-record uid)))
+    (cond ((null u) nil)
+          (t (when name-sup (setf (user-name u) name))
+             (when email-sup (setf (user-email u) email))
+             (when roles-sup (setf (user-roles u) roles))
+             (when pass-sup (setf (user-pass u) pass))
+             (when pass-ctime-sup (setf (user-pass-change-time u) pass-ctime))
+             (when prev-pws-sup (setf (user-previous-passwords u) prev-pws))
+             (userdb-put (suid2str uid) (prin1-to-string u))))))
 
 ;; D:
 (defun remove-users (idlist)
