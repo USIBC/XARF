@@ -19,7 +19,8 @@ PP=$1
 STATQUERY="\
   set pagesize 0;
   set feedback off;
-  select satstat2,count(*) from ppstat where ppyear = $YR and pp = $PP group by satstat2;"
+  select satstat2,count(*) from ppstat
+    where ppyear = $YR and pp = $PP and satstat2 is not null group by satstat2;"
 
 # function: getstatus id
 # executes STATQUERY on id and prints the results on a single line
