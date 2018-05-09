@@ -3,6 +3,9 @@
 
 (in-package :xarf)
 
+(defparameter *xarf-user-roles* '(admin executive))
+
+
 (make-uri-dispatcher-and-handler admin
   (session-check admin)
   (role-check admin :required-role-list '(admin) :refusal-destination "/xarf?msg=10")
