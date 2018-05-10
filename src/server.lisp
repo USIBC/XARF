@@ -34,4 +34,5 @@
                         :access-log-destination *access-log*
                         :message-log-destination *message-log*)))
 
-(defun clean-quit () (stop *xarf-acceptor* :soft t) (sleep 1) (exit))
+(defun clean-quit ()
+  (stop *xarf-acceptor* :soft t) (sleep 1) (lmdb:close-environment *lmdb-env*) (exit))

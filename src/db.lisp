@@ -11,16 +11,17 @@
 
 (defun vec2str (v) (when v (trivial-utf-8:utf-8-bytes-to-string v)))
 
+(defparameter *lmdb-env*
+  (lmdb:open-environment (lmdb:make-environment (scat *xarf-home* "data/lmdb/"))))
+
 (defmacro with-userdb ((d) &body body)
-  "See http://borretti.me/article/lmdb-from-common-lisp"
-  (alexandria:with-gensyms (env txn)
-    `(let ((,env (lmdb:make-environment (scat *xarf-home* "data/lmdb/"))))
-       (lmdb:with-environment (,env)
-         (let ((,txn (lmdb:make-transaction ,env)))
-           (lmdb:begin-transaction ,txn)
-           (let ((,d (lmdb:make-database ,txn "users")))
-             (lmdb:with-database (,d)
-               (prog1 (progn ,@body) (lmdb:commit-transaction ,txn)))))))))
+  "Perform a user DB transaction in *lmdb-env*"
+  (alexandria:with-gensyms (txn)
+    `(let ((,txn (lmdb:make-transaction *lmdb-env*)))
+       (lmdb:begin-transaction ,txn)
+       (let ((,d (lmdb:make-database ,txn "users")))
+         (lmdb:with-database (,d)
+           (prog1 (progn ,@body) (lmdb:commit-transaction ,txn)))))))
 
 (defun userdb-put (keystr valstr)
   (with-userdb (x) (lmdb:put x (str2vec keystr) (str2vec valstr))))
