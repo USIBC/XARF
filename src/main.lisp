@@ -4,7 +4,13 @@
 (in-package :xarf)
 
 
-(defparameter *reset-tbl* (make-hash-table :test 'equal))
+(let ((tbl (make-hash-table :test 'equal))
+      (m (make-mutex :name "reset-tbl-lock")))
+  (defun reset-tbl (action k &optional v)
+    (with-mutex (m) (case action
+                      (GET (gethash k tbl))
+                      (SET (setf (gethash k tbl) v))
+                      (REM (remhash k tbl))))))
 
 
 (defun password-age (uid)
@@ -101,15 +107,15 @@
 (make-uri-dispatcher-and-handler reset
   (let ((sid (sanitize (get-parameter "i"))) req)
     (cond
-      ((not (setq req (gethash sid *reset-tbl*)))
+      ((not (setq req (reset-tbl 'get sid)))
        (redirect "/xarf") (return-from reset))
       ((> (- (get-universal-time) (cadr req)) 7200)
-       (remhash sid *reset-tbl*) (redirect "/login?msg=22") (return-from reset))
+       (reset-tbl 'rem sid) (redirect "/login?msg=22") (return-from reset))
       (t
        (modify-user (car req) :pass-ctime 0)
        (start-session) (setf (session-value 'uid) (car req)) (setf (session-value 'reset) t)
        (log-message* :info "~a password reset login from ~a" (car req) (real-remote-addr))
-       (remhash sid *reset-tbl*)
+       (reset-tbl 'rem sid)
        (redirect "/passwd?msg=15")))))
 
 
@@ -126,7 +132,7 @@
          (redirect "/reqreset?msg=21"))
         (t
          (setq sid (sha256hash (scat (format nil "~x" (random 10000000)) (user-email urec))))
-         (setf (gethash sid *reset-tbl*) (list uid (get-universal-time)))
+         (reset-tbl 'set sid (list uid (get-universal-time)))
          (send-email *relay-host* *from-address* (user-email urec)
                      "XARF password reset URL" (scat *base-url* "/reset?i=" sid))
          (redirect "/reqreset?msg=19")))
