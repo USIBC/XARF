@@ -44,13 +44,6 @@
                                   "bin/active-user-counts")))))
 
 
-(make-uri-dispatcher-and-handler wtstatus
-  (session-check wtstatus)
-  (make-xarf-html-screen
-      (:title "WebTA App-tier Status Summary" :footmenu *footer-menu*)
-    (:pre (fmt "~a" (remote-slurp (scat *wt-ssh-user* "@" *wstatus-host*) "bin/status z")))))
-
-
 ;;===< begin wt-dbstatus >===
 
 (defun test-wt-url (id)

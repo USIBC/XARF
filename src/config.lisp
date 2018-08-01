@@ -59,7 +59,6 @@
       ("WebTA"
        "/menu?k=WebTA"
        (("Active User Counts" "/wtusercount")
-        ("App-tier Status Summary" "/wtstatus")
         ("Bulk Groovy Reports" "/bulkgroovy")
         ("Database Status" "/indirect?u=/wt-dbstatus&t=WebTA+DB+Status")
         ("Instance Directory" "/indirect?u=/wt-directory&t=WebTA+Instance+Directory")

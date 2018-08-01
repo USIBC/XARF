@@ -4,9 +4,6 @@
 
 (in-package :xarf)
 
-;; Host on which RLD's Wstatus program is deployed & running:
-(defparameter *wstatus-host* "hostname2")
-
 ;; User with read access to webTA logs on app-tier hosts:
 (defparameter *wt-ssh-user* "wtrptusr")
 
@@ -39,15 +36,7 @@
 (defparameter *wt-instances*
   (mapcar
    (lambda (x) (apply #'make-wt-instance x))
-   '((:id |410|  :client ibwc :webfarm prod :type trn-dmo)
-     (:id |412|  :client ntsb :webfarm prod :type trn-dmo)
-     (:id |420|  :client ussc :webfarm prod :type trn-dmo)
-     (:id |421|  :client cpsc :webfarm prod :type trn-dmo)
-     (:id |423|  :client fhfa :webfarm prod :type trn-dmo)
-     (:id |424|  :client sec  :webfarm prod :type trn-dmo)
-     (:id |425|  :client dcc  :webfarm prod :type trn-dmo)
-     (:id |426|  :client sba  :webfarm prod :type trn-dmo)
-     (:id |489|  :client nil  :webfarm prod :type trn-dmo)
+   '((:id |489|  :client nil  :webfarm prod :type trn-dmo)
      (:id |490|  :client nil  :webfarm prod :type trn-dmo)
      (:id |491|  :client nil  :webfarm prod :type trn-dmo)
      (:id |492|  :client nil  :webfarm prod :type trn-dmo)
@@ -68,7 +57,7 @@
      (:id |623|  :client fhfa :webfarm test :type test-nr-func)
      (:id |624|  :client sec  :webfarm test :type test-nr-func)
      (:id |625|  :client dcc  :webfarm test :type test-nr-func)
-     (:id |626|  :client sba  :webfarm test :type test-nr-func)
+     (:id |627|  :client pbgc :webfarm test :type test-nr-func)
      (:id |689|  :client nil  :webfarm test :type test-nr-func)
      (:id |1214| :client ssa  :webfarm prod :type test-em-auto)
      (:id |1410| :client ibwc :webfarm test :type test-em-func)
@@ -87,7 +76,7 @@
      (:id |1423| :client fhfa :webfarm test :type test-em-func)
      (:id |1424| :client sec  :webfarm test :type test-em-func)
      (:id |1425| :client dcc  :webfarm test :type test-em-func)
-     (:id |1426| :client sba  :webfarm test :type test-em-func)
+     (:id |1427| :client pbgc :webfarm test :type test-em-func)
      (:id |1610| :client ibwc :webfarm prod :type prod)
      (:id |1611| :client iaf  :webfarm prod :type prod)
      (:id |1612| :client ntsb :webfarm prod :type prod)
@@ -104,7 +93,7 @@
      (:id |1623| :client fhfa :webfarm prod :type prod)
      (:id |1624| :client sec  :webfarm prod :type prod)
      (:id |1625| :client dcc  :webfarm prod :type prod)
-     (:id |1626| :client sba  :webfarm prod :type prod)
+     (:id |1627| :client pbgc :webfarm prod :type prod)
      (:id |1714| :client ssa  :webfarm prod :type para))))
 
 ; Scripts in app-tier-hosts[1-5]:/path/to/groovy/ whose basenames are
