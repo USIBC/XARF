@@ -31,7 +31,7 @@ while [ "$1" ]; do
   TNSPING="$(tnsping $TNSPING_TRGT |awk '/OK/ {print $1}')"
   [ ! "$TNSPING" ] && { TNSPING="failed!"; QRESULT="NA"; output; XS=1; continue; }
 
-  QR=$(sqlplus -S -L $CXSTRING <<<"$TESTQRY")
+  QR=$(sqlplus -S -L $CXSTRING <<<"$TESTQRY") || QR=0
   [ $QR -gt 9 ] && QRESULT="OK" || { QRESULT="failed!"; XS=1; }
 
   output; done; exit $XS
