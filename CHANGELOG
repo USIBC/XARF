@@ -1,3 +1,6 @@
+20190205.1400
+ * correct handling of zero-length keys for lmdb:get/put/del
+
 20180727.1300
  * remove view of broken wtstatus report
 

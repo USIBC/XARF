@@ -24,13 +24,16 @@
            (prog1 (progn ,@body) (lmdb:commit-transaction ,txn)))))))
 
 (defun userdb-put (keystr valstr)
-  (with-userdb (x) (lmdb:put x (str2vec keystr) (str2vec valstr))))
+  (when (plusp (length keystr))
+    (with-userdb (x) (lmdb:put x (str2vec keystr) (str2vec valstr)))))
 
 (defun userdb-get (keystr)
-  (vec2str (with-userdb (x) (lmdb:get x (str2vec keystr)))))
+  (when (plusp (length keystr))
+    (vec2str (with-userdb (x) (lmdb:get x (str2vec keystr))))))
 
 (defun userdb-del (keystr)
-  (with-userdb (x) (lmdb:del x (str2vec keystr))))
+  (when (plusp (length keystr))
+    (with-userdb (x) (lmdb:del x (str2vec keystr)))))
 
 (defun userdb-dump ()
   (let (r)
