@@ -1,3 +1,9 @@
+20190228.1200
+ * cleanup; package reports as separate ASDF systems
+
+20190212.1930
+ * cleanup; rename string concatenation macro
+
 20190205.1400
  * correct handling of zero-length keys for lmdb:get/put/del
 

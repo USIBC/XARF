@@ -12,7 +12,7 @@
 (defun vec2str (v) (when v (trivial-utf-8:utf-8-bytes-to-string v)))
 
 (defparameter *lmdb-env*
-  (lmdb:open-environment (lmdb:make-environment (scat *xarf-home* "data/lmdb/"))))
+  (lmdb:open-environment (lmdb:make-environment (s+ *xarf-home* "data/lmdb/"))))
 
 (defmacro with-userdb ((d) &body body)
   "Perform a user DB transaction in *lmdb-env*"
@@ -87,7 +87,7 @@
 ;; ====< Messages >====
 
 (defparameter *xarf-messages*
-  (with-open-file (s (scat *xarf-home* "data/messages") :direction :input)
+  (with-open-file (s (s+ *xarf-home* "data/messages") :direction :input)
     (read s nil)))
 
 (defun get-msg (msg-id)

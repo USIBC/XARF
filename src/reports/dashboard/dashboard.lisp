@@ -1,7 +1,20 @@
 ;;; dashboard.lisp -- 'PPSD Dashboard' website
 ;;; D. Racine 20170908
 
-(in-package :xarf)
+(in-package :xarf-dashboard)
+
+
+(setq *reports-menu* (stable-sort (append *reports-menu* *menu*)
+                                  #'string-lessp :key #'car))
+
+
+(defmacro applink (app id)
+  (if (eq app 'wt)
+      `(hoverlink
+        (s+ ,id " - " (wt-client-name ,id)) (make-wt-url ,id))
+      `(hoverlink
+        (s+ ,id " - " (qt-client-name ,id)) (make-qt-url ,id))))
+
 
 (define-easy-handler (index :uri "/") nil
   (make-xarf-html-screen (:title "PPSD Dashboard" :no-title-menu t)
@@ -29,14 +42,14 @@
           ((:tr) (:th "ID - Client") (:th "Type"))
           (dolist (i (sort ids (lambda (x y) (<= (parse-integer x) (parse-integer y)))))
             (let ((type (case (funcall ,typegetter-fn (funcall ,instancegetter-fn i))
-                          (dev "Development")
-                          (trn-dmo "Training/Demo")
-                          (test-nr-auto "NxtRel Auto Test")
-                          (test-nr-func "NxtRel Func Test")
-                          (test-em-auto "Emerg Auto Test")
-                          (test-em-func "Emerg Func Test")
-                          (prod "Production")
-                          (para "Parallel")
+                          (:dev "Development")
+                          (:trn-dmo "Training/Demo")
+                          (:test-nr-auto "NxtRel Auto Test")
+                          (:test-nr-func "NxtRel Func Test")
+                          (:test-em-auto "Emerg Auto Test")
+                          (:test-em-func "Emerg Func Test")
+                          (:prod "Production")
+                          (:para "Parallel")
                           (otherwise "unknown"))))
               (htm ((:tr)
                     ((:td) (applink ,qt-or-wt i))
@@ -45,29 +58,29 @@
 
 (ddir "Quicktime Test" qttest-d
       qt #'qt-ids #'qt-instance-type #'get-qt-instance
-      '(test-nr-auto test-nr-func test-em-auto test-em-func dev))
+      '(:test-nr-auto :test-nr-func :test-em-auto :test-em-func :dev))
 
 
 (ddir "Quicktime Production" qtprod-d
       qt #'qt-ids #'qt-instance-type #'get-qt-instance
-      '(prod para trn-dmo))
+      '(:prod :para :trn-dmo))
 
 
 (ddir "WebTA Emergency Test" wtemtest-d
       wt #'wt-ids #'wt-instance-type #'get-wt-instance
-      '(test-em-auto test-em-func))
+      '(:test-em-auto :test-em-func))
 
 
 (ddir "WebTA Next Release Test" wtnrtest-d
       wt #'wt-ids #'wt-instance-type #'get-wt-instance
-      '(test-nr-auto test-nr-func))
+      '(:test-nr-auto :test-nr-func))
 
 
 (ddir "WebTA Production" wtprod-d
       wt #'wt-ids #'wt-instance-type #'get-wt-instance
-      '(prod para))
+      '(:prod :para))
 
 
 (ddir "WebTA Training" wttrn-d
       wt #'wt-ids #'wt-instance-type #'get-wt-instance
-      '(trn-dmo))
+      '(:trn-dmo))

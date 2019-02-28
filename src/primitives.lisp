@@ -7,11 +7,15 @@
 
 (defun suid2str (suid) (string-downcase (symbol-name suid)))
 
-(defmacro scat (&rest args) `(concatenate 'string ,@args))
+(defmacro s+ (&rest args) `(concatenate 'string ,@args))
 
 (defmacro with-html (&body body)
   `(with-html-output-to-string (*standard-output* nil :prologue t)
      ,@body))
+
+
+(defun xarf-menu ()
+  `(("XARF Menu" "/xarf" ,(append *reports-menu* '(("---" "/xarf")) *meta-menu*))))
 
 
 (defun find-menu-item (key menu)
@@ -47,7 +51,7 @@
 
 (defmacro make-xarf-html-screen
     ((&key title no-title-menu footmenu (js "") redir-uri) &body content)
-  (let ((tmenu (if no-title-menu nil '(html-menu "nav" *xarf-menu*))))
+  (let ((tmenu (if no-title-menu nil '(html-menu "nav" (xarf-menu)))))
     `(progn
        (no-cache)
        (with-html
@@ -58,7 +62,7 @@
            ((:script :type "text/javascript") (fmt "~a" ,js))
            ,(if redir-uri `(:meta
                             :http-equiv "refresh"
-                            :content (scat "0;url=" ,redir-uri))))
+                            :content (s+ "0;url=" ,redir-uri))))
           (:body
            (:h1 ,tmenu (fmt "~a" ,title))
            ((:div :class "main")
@@ -94,19 +98,24 @@
   (let ((prefix (cdr (assoc tz '((5 . "E") (6 . "C") (7 . "M") (8 . "P")))))
         (suffix (if dst-p "DT" "ST")))
     (if prefix
-        (scat prefix suffix)
-        (scat "TZ" (princ-to-string tz) suffix))))
+        (s+ prefix suffix)
+        (s+ "TZ" (princ-to-string tz) suffix))))
 
 
-(defun timestr ()
-  "Return the current system date/time as a string."
+(defun stringify-universal-time (universal-time)
+  "Decode a universal time to a local date/time string"
   (multiple-value-bind (sec min hour day month year weekday dst-p tz)
-      (get-decoded-time)
+      (decode-universal-time universal-time)
     (with-output-to-string (s)
       (format s "~a ~d-~2,'0d-~2,'0d ~2,'0d:~2,'0d:~2,'0d ~a"
               (nth weekday '("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
               year month day hour min sec
               (tz-dst-map tz dst-p)))))
+
+
+(defun timestr ()
+  "Return the current system date/time as a string."
+  (stringify-universal-time (get-universal-time)))
 
 
 (defun passbuffer (latest old-passwds)
@@ -130,21 +139,20 @@
    :search t :wait nil :output output :error *message-log* :if-error-exists :append))
 
 
-(defmacro with-xarf-pkg (&body body)
-  `(let ((*package* (find-package :xarf)))
+(defmacro with-pkg (package-keyword &body body)
+  `(let ((*package* (find-package ,package-keyword)))
      ,@body))
 
 
-(defmacro remote-slurp (usr@host rcmd &key (timeout 30) binary)
+(defmacro remote-slurp (usr@host rcmd &key (timeout 30) binary (pkg *package*))
   "Writes code to invoke rcmd as usr on host and return its output as a string or octet sequence"
   (let ((fn (if binary 'flexi-streams:with-output-to-sequence 'with-output-to-string))
         (tv (if binary #() "timeout")))
     `(join-thread
       (make-thread
-       (lambda ()
-         (with-xarf-pkg
-           (,fn (s) (process-close
-                     (process-wait (run-remote-cmd ,usr@host ,rcmd :output s) t))))))
+       (lambda () (with-pkg ,pkg
+                    (,fn (s) (process-close
+                              (process-wait (run-remote-cmd ,usr@host ,rcmd :output s) t))))))
       :default ,tv :timeout ,timeout)))
 
 
@@ -153,11 +161,3 @@
     ((:a :class "qturl" :href url)
      (str txt)
      ((:span) (fmt "~a" url)))))
-
-
-(defmacro applink (app id)
-  (if (eq app 'wt)
-      `(hoverlink
-        (scat ,id " - " (wt-client-name ,id)) (make-wt-url ,id))
-      `(hoverlink
-        (scat ,id " - " (qt-client-name ,id)) (make-qt-url ,id))))

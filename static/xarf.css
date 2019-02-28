@@ -32,6 +32,10 @@ li
   {margin:6pt;}
 img
   {margin:4pt;}
+img.center
+  {display: block;
+  margin-left: auto;
+  margin-right: auto;}
 
 table
   {width:99%;}

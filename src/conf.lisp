@@ -19,13 +19,13 @@
 ;; Sessions:
 (defparameter *use-remote-addr-for-sessions* nil)
 (defparameter *use-user-agent-for-sessions* t)
-(defparameter *session-max-time* 14400) ;seconds
+(defparameter *session-max-time* 28800) ;seconds
 
 
 ;; Passwords:
 (defparameter *max-password-age* 60)    ;days
 (defparameter *password-warn* 7)        ;days
-(defparameter *max-previous-passwords* 8)
+(defparameter *max-previous-passwords* 3)
 (defparameter *min-password-length* 8)
 
 
@@ -39,39 +39,16 @@
 
 
 ;; Menu definitions ((label url [submenu]) ...)
-(defparameter *xarf-menu*
-  '(("XARF Menu"
-     "/xarf"
-     (("PPSD Dashboard" "/")
-      ("Quicktime"
-       "/menu?k=Quicktime"
-       (("Active User Counts" "/qtusercount")
-        ("app_cfg Viewer" "/qtappcfg")
-        ("App-tier Status Summary" "/qstatus")
-        ("Database Status" "/indirect?u=/qt-dbstatus&t=Quicktime+DB+Status")
-        ("Instance Directory" "/indirect?u=/qt-directory&t=QT+Instance+Directory")
-        ("Jserver Utilization" "/jserver-utilization")
-        ("List Import Data" "/listimports")
-        ("Load & Performance" "/qt-load-graphs")
-        ("Timesheet Status" "/ts-status")
-        ("Trans/Amend Extractor" "/webtrans")))
-      ("StarTeam" "/streports")
-      ("WebTA"
-       "/menu?k=WebTA"
-       (("Active User Counts" "/wtusercount")
-        ("Bulk Groovy Reports" "/bulkgroovy")
-        ("Database Status" "/indirect?u=/wt-dbstatus&t=WebTA+DB+Status")
-        ("Instance Directory" "/indirect?u=/wt-directory&t=WebTA+Instance+Directory")
-        ("Load & Performance" "/wt-load-graphs")
-        ("Timesheet Status" "/wt-ts-status")))
-      ("Change Password" "/passwd")
-      ("Administration" "/admin")
-      ("About the XARF" "/about")
-      ("Log Out" "/logout")))))
-
+(defparameter *meta-menu*
+  '(("Change Password" "/passwd")
+    ("Administration" "/admin")
+    ("About the XARF" "/about")
+    ("Log Out" "/logout")))
 
 (defparameter *footer-menu*
   '(("Top" "#") ("XARF Menu" "/xarf") ("PPSD Dashboard" "/") ("Log Out" "/logout")))
+
+(defparameter *reports-menu* nil)
 
 
 ;; Login screen footer:

@@ -56,15 +56,15 @@
   (session-check xarf)
   (make-xarf-html-screen (:title "XARF Main Menu" :footmenu *footer-menu*)
     (and msg (htm (:div :class "msg" (fmt "~a" (get-msg (sanitize msg))))))
-    (:div :class "flatmenu" (html-menu "flat" *xarf-menu*))))
+    (:div :class "flatmenu" (html-menu "flat" (xarf-menu)))))
 
 
 (make-uri-dispatcher-and-handler menu
   (session-check menu)
   (let* ((key (sanitize (get-parameter "k")))
-         (i (find-menu-item  key *xarf-menu*))
-         (m (if i (list i) *xarf-menu*)))
-    (make-xarf-html-screen (:title (scat key " Menu") :footmenu *footer-menu*)
+         (i (find-menu-item  key (xarf-menu)))
+         (m (if i (list i) (xarf-menu))))
+    (make-xarf-html-screen (:title (s+ key " Menu") :footmenu *footer-menu*)
       (:div :class "flatmenu" (html-menu "flat" m)))))
 
 
@@ -72,10 +72,10 @@
   (session-check about)
   (make-xarf-html-screen
       (:title "About the XARF" :footmenu *footer-menu*)
-    (fmt "~a" (pull-static-file (scat *xarf-home* "static/about.html")))
+    (fmt "~a" (pull-static-file (s+ *xarf-home* "static/about.html")))
     ((:h3 :style "text-align:left") "Change Log:")
     ((:pre)
-     (fmt "~a" (pull-static-file (scat *xarf-home* "static/CHANGELOG"))))))
+     (fmt "~a" (pull-static-file (s+ *xarf-home* "static/CHANGELOG"))))))
 
 
 (make-uri-dispatcher-and-handler login
@@ -94,7 +94,7 @@
          (return-from login))
         (t (setq msg "2"))))
     (make-xarf-html-screen (:title "XARF Login" :no-title-menu t)
-      (html-menu "nav" *dash-menu*)
+      (html-menu "nav" '(("PPSD Dashboard" "/")))
       (and msg (htm (:div :class "msg" (fmt "~a" (get-msg msg)))))
       ((:form :id "login" :method "post" :action "/login")
        ((:label) "User ID") (:input :type "text" :name "uid" :size 20 :autofocus t) (:br)
@@ -131,10 +131,10 @@
         ((not (scan "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+" (user-email urec)))
          (redirect "/reqreset?msg=21"))
         (t
-         (setq sid (sha256hash (scat (format nil "~x" (random 10000000)) (user-email urec))))
+         (setq sid (sha256hash (s+ (format nil "~x" (random 10000000)) (user-email urec))))
          (reset-tbl 'set sid (list uid (get-universal-time)))
          (send-email *relay-host* *from-address* (user-email urec)
-                     "XARF password reset URL" (scat *base-url* "/reset?i=" sid))
+                     "XARF password reset URL" (s+ *base-url* "/reset?i=" sid))
          (redirect "/reqreset?msg=19")))
       (return-from reqreset))
     (make-xarf-html-screen
