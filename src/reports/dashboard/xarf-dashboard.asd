@@ -1,7 +1,7 @@
 (in-package :asdf-user)
 
 (defsystem :xarf-dashboard
-  :depends-on (:xarf :xarf-quicktime :xarf-webta)
+  :depends-on (:xarf)
   :serial t
   :components
   ((:file "packages")
