@@ -1,3 +1,6 @@
+20190305.1500
+ * find and load all reports on startup
+
 20190228.1200
  * cleanup; package reports as separate ASDF systems
 

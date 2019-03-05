@@ -9,30 +9,25 @@ die() { echo "$(basename $0): $1" >&$2; exit $3; }
 
 . "$XARF_HOME/xarf-env" || exit 1
 
-trap "" SIGCHLD  # prevents process substitution zombies
-
 mkdir -pm 700 "$XARF_HOME/log" || exit 1
 
 L="$XARF_HOME/log/sbcl.xarf"
 
 N=/dev/null
 
-S="\
-  (require :asdf)
-  (asdf:initialize-source-registry #P\"$XARF_HOME/asdf.conf\")
-  (require :xarf-dashboard)
-  (in-package :xarf)
-  (start-xarf)
-  (load \"$SLIME_HOME/swank-loader.lisp\")
-  (swank-loader:init)
-  (swank:create-server :port $SWANK_PORT :dont-close t)
-  (princ \"== XARF started at \")
-  (loop (format t \"mark: ~a~%\" (timestr)) (sleep 900))"
-
 netstat -lntu |egrep -q ":($XARF_WEB_PORT|$SWANK_PORT)  *[0-9:]" \
   && die "no action taken: a port defined in $XARF_HOME/xarf-env is in use" 2 1
 
-nohup sbcl --lose-on-corruption --userinit <(echo "$S") --eval "'xarf" <$N >"$L" 2>&1 &
+nohup sbcl \
+      --lose-on-corruption \
+      --userinit "$XARF_HOME/src/load-all-systems.lisp" \
+      --eval "(in-package :xarf)" \
+      --eval "(start-xarf)" \
+      --eval "(load \"$SLIME_HOME/swank-loader.lisp\")" \
+      --eval "(swank-loader:init)" \
+      --eval "(swank:create-server :port $SWANK_PORT :dont-close t)" \
+      --eval "(princ \"== XARF started at \")" \
+      --eval "(loop (format t \"mark: ~a~%\" (timestr)) (sleep 900))" <$N >"$L" 2>&1 &
 
 sleep 3
 
