@@ -127,11 +127,6 @@
               (list latest))))
 
 
-(defun eq+ (L)
-  "Returns (car L) if all elements of L are non-nil and eq"
-  (reduce #'(lambda (x y) (if (eq x y) x nil)) L :initial-value (car L)))
-
-
 (defun run-remote-cmd (usr@host rcmd &key (output :stream))
   "Returns a process structure running 'rcmd' as usr on host via ssh"
   (run-program

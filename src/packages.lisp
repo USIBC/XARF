@@ -15,7 +15,6 @@
            :sanitize
            :stringify-universal-time
            :timestr
-           :eq+
            :run-remote-cmd
            :with-pkg
            :remote-slurp
