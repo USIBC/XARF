@@ -9,6 +9,10 @@
 
 (defmacro s+ (&rest args) `(concatenate 'string ,@args))
 
+(defmacro lst2str (ctrlstr arglist)
+  `(apply #'format (append (list nil ,ctrlstr) ,arglist)))
+
+
 (defmacro with-html (&body body)
   `(with-html-output-to-string (*standard-output* nil :prologue t)
      ,@body))

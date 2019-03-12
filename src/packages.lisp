@@ -7,6 +7,7 @@
            :*reports-menu*
            :*footer-menu*
            :s+
+           :lst2str
            :find-menu-item
            :html-menu
            :make-xarf-html-screen
