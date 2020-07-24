@@ -9,7 +9,7 @@ die() { echo "$(basename $0): $1" >&$2; exit $3; }
 
 . "$XARF_HOME/xarf-env" || exit 1
 
-mkdir -pm 700 "$XARF_HOME/log" || exit 1
+mkdir -pm 700 "$XARF_HOME/log" "$XARF_HOME/data/lmdb" || exit 1
 
 L="$XARF_HOME/log/sbcl.xarf"
 

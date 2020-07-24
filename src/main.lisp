@@ -28,7 +28,7 @@
          (return-from ,blockname))
       `(cond
          ((null *session*)
-          (redirect "/login?msg=1")
+          (redirect (s+ "/login?msg=1&lu=" (url-encode (request-uri*))))
           (return-from ,blockname))
          ((> (password-age (session-value 'uid)) *max-password-age*)
           (redirect "/passwd?msg=15")
@@ -81,7 +81,8 @@
 (make-uri-dispatcher-and-handler login
   (let ((uid (sanitize (post-parameter "uid")))
         (pass (post-parameter "pass"))
-        (msg (sanitize (get-parameter "msg"))))
+        (msg (sanitize (get-parameter "msg")))
+        (landinguri (or (get-parameter "lu") (post-parameter "lu") "/xarf")))
     (when (and uid pass)
       (setf uid (str2suid uid))
       (cond
@@ -89,8 +90,8 @@
          (start-session) (setf (session-value 'uid) uid)
          (log-message* :info "~a login from ~a" uid (real-remote-addr))
          (if (< (- *max-password-age* *password-warn*) (password-age uid) *max-password-age*)
-             (redirect "/xarf?msg=14")
-             (redirect "/xarf"))
+             (redirect (s+ landinguri "?msg=14"))
+             (redirect landinguri))
          (return-from login))
         (t (setq msg "2"))))
     (make-xarf-html-screen (:title "XARF Login" :no-title-menu t)
@@ -99,6 +100,7 @@
       ((:form :id "login" :method "post" :action "/login")
        ((:label) "User ID") (:input :type "text" :name "uid" :size 20 :autofocus t) (:br)
        ((:label) "Password") (:input :type "password" :name "pass" :size 20) (:br)
+       (:input :type "hidden" :name "lu" :value landinguri)
        (:input :type "submit" :value "Log In"))
       ((:div :class "msg2") ((:a :href "/reqreset") "Request a password reset email"))
       ((:div :class "msg2") (fmt "~a" *helpmsg*)))))

@@ -1,3 +1,6 @@
+20200723.1900
+ * After authenticating the user, redirect to the URL that was originally requested
+
 20190305.1500
  * find and load all reports on startup
 
